@@ -7,33 +7,16 @@ This repo provides:
 - Reusable GitHub Actions:
   - `deploy-preview` – deploy PR preview to Kubernetes
   - `delete-preview` – delete preview namespace on PR close
-  - `comment-preview` – sticky PR comment with preview URL
+  - `comment-preview` – PR comment with preview URL
 - Shared Kubernetes base manifests (deployment, service, ingress)
 - Single-source preview deployment logic
-- Local testing via [`act`](https://github.com/nektos/act) + OrbStack Kubernetes
+- Local action runner via self-hosted Github Actions runner and OrbStack Kubernetes
 
-## Setup for service providers
+## Create service preview
 
-Add `.github/workflows/preview.yml`
+Add `Dockerfile` to your service that exposes port `4000` or similar.
 
-```yml
-name: Preview
-
-on:
-  pull_request:
-    types: [opened, reopened, synchronize, closed]
-
-jobs:
-  preview:
-    uses: kristjanjansen/mf-infra/.github/workflows/preview.yml@main
-    with:
-      service_name: mf-apps
-      port: 3000
-```
-
-### Setup for service consumers
-
-Add `.github/workflows/preview.yml`
+Then add `.github/workflows/preview.yml`:
 
 ```yml
 name: Preview
@@ -46,29 +29,21 @@ jobs:
   preview:
     uses: kristjanjansen/mf-infra/.github/workflows/preview.yml@main
     with:
-      service_name: mf-host-web
-      port: 3000
+      service_name: my-service
+      port: 4000
 ```
 
-Add `.env.services`
-
-```env
-SERVICE_URL=https://servicename-pr-12.localtest.me
-```
+When creating pull requires with id of `123`, your service will now be available at `https://my-service-pr-123.localtest.me`.
 
 ## Local setup on Mac
-
-### Install OrbStack & Enable Kubernetes
-
-OrbStack provides a lightweight Kubernetes cluster with perfect macOS integration.
 
 Install OrbStack:
 
 ```bash
-brew install orbstack kubectl act
+brew install orbstack kubectl
 ```
 
-Run orbstack:
+Run OrbStack:
 
 ```bash
 orb
@@ -86,13 +61,9 @@ Expected output:
 orbstack   Ready   control-plane,master   ...
 ```
 
-You now have a working local Kubernetes cluster.
-
 ### Install NGINX Ingress Controller
 
-Preview URLs such as `https://servicename-pr-12.localtest.me` require an ingress controller. OrbStack does not ship one by default.
-
-Install NGINX Ingress:
+Run:
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml
@@ -108,32 +79,6 @@ Ingress routing is now enabled for `*.localtest.me` hostnames.
 
 ### Set Up a Self-Hosted GitHub Runner
 
-Go on each repo that has a preview workflow:
+On each repo that has a preview workflow, follow here instructions here:
 
-```
-GitHub → Repo → Settings → Actions → Runners → New self-hosted runner
-```
-
-Choose:
-
-- macOS
-- architecture: arm64 (Apple Silicon)
-
-Follow the instructions in the GitHub UI to set up a self-hosted runner.
-
-### Set up arc
-
-For each repo that has a preview workflow, add the `.arcrc` file:
-
-```bash
--P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-latest
---container-architecture linux/amd64
---bind $HOME/.kube:/root/.kube
---pull=false
-```
-
-Then run:
-
-```bash
-act pull_request
-```
+> GitHub → Repo → Settings → Actions → Runners → New self-hosted runner
