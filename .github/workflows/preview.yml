@@ -14,6 +14,9 @@ on:
 jobs:
   preview:
     runs-on: self-hosted
+    permissions:
+      pull-requests: write
+      issues: write
 
     env:
       SERVICE_NAME: ${{ inputs.service_name }}
