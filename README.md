@@ -79,6 +79,16 @@ Ingress routing is now enabled for `*.localtest.me` hostnames.
 
 ### Set Up a Self-Hosted GitHub Runner
 
-On each repo that has a preview workflow, follow here instructions here:
+Go to:
 
 > GitHub → Repo → Settings → Actions → Runners → New self-hosted runner
+
+Follow the instructions on each repo that has a preview workflow.
+
+### Set Github Actions Permissions
+
+Go to:
+
+> GitHub → Repo → Settings → Actions → General → Workflow permissions
+
+Select "Read and write permissions".
