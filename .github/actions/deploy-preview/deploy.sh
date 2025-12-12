@@ -15,20 +15,20 @@ sed \
   -e "s/SERVICE_NAME_PLACEHOLDER/$INPUT_SERVICE_NAME/g" \
   -e "s/IMAGE_PLACEHOLDER/$INPUT_IMAGE/g" \
   -e "s/PORT_PLACEHOLDER/$INPUT_PORT/g" \
-  k8s/base-deployment.yaml \
+  "$GITHUB_WORKSPACE/k8s/base-deployment.yaml" \
   > .preview-temp/deployment.yaml
 
 sed \
   -e "s/SERVICE_NAME_PLACEHOLDER/$INPUT_SERVICE_NAME/g" \
   -e "s/PORT_PLACEHOLDER/$INPUT_PORT/g" \
-  k8s/base-service.yaml \
+  "$GITHUB_WORKSPACE/k8s/base-service.yaml" \
   > .preview-temp/service.yaml
 
 sed \
   -e "s/SERVICE_NAME_PLACEHOLDER/$INPUT_SERVICE_NAME/g" \
   -e "s/HOST_PLACEHOLDER/$INPUT_HOST/g" \
   -e "s/PORT_PLACEHOLDER/$INPUT_PORT/g" \
-  k8s/base-ingress.yaml \
+  "$GITHUB_WORKSPACE/k8s/base-ingress.yaml" \
   > .preview-temp/ingress.yaml
 
 # Apply manifests
