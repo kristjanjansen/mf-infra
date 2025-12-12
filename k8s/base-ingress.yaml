@@ -3,12 +3,10 @@ kind: Ingress
 metadata:
   name: ${SERVICE_NAME}
   annotations:
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      if ($http_origin ~* "^https?://([a-z0-9-]+)\.localtest\.me(:[0-9]+)?$") {
-        add_header Access-Control-Allow-Origin "$http_origin" always;
-        add_header Access-Control-Allow-Methods "GET, OPTIONS" always;
-        add_header Access-Control-Allow-Headers "*" always;
-      }
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*.localtest.me"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "*"
 spec:
   ingressClassName: nginx
   rules:
