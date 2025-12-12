@@ -1,0 +1,59 @@
+name: Preview Environment
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      port:
+        required: true
+        type: string
+    secrets: {}
+
+jobs:
+  preview:
+    runs-on: self-hosted
+
+    env:
+      SERVICE_NAME: ${{ inputs.service_name }}
+      PORT: ${{ inputs.port }}
+      PR: ${{ github.event.number || 1 }}
+      NAMESPACE: ${{ inputs.service_name }}-pr-${{ github.event.number || 1 }}
+      IMAGE: ${{ inputs.service_name }}:pr-${{ github.event.number || 1 }}
+      HOST: ${{ inputs.service_name }}-pr-${{ github.event.number || 1 }}.localtest.me
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t "$IMAGE" .
+
+      - name: Deploy preview via infra action
+        uses: kristjanjansen/mf-infra/.github/actions/deploy-preview@main
+        with:
+          service_name: ${{ env.SERVICE_NAME }}
+          namespace: ${{ env.NAMESPACE }}
+          image: ${{ env.IMAGE }}
+          host: ${{ env.HOST }}
+          port: ${{ env.PORT }}
+
+      - name: Comment PR
+        uses: kristjanjansen/mf-infra/.github/actions/comment-preview@main
+        with:
+          message: |
+            **Preview ready:**  
+            http://${{ env.HOST }}
+
+  cleanup:
+    if: github.event.action == 'closed'
+    runs-on: self-hosted
+
+    env:
+      NAMESPACE: ${{ inputs.service_name }}-pr-${{ github.event.number || 1 }}
+
+    steps:
+      - uses: kristjanjansen/mf-infra/.github/actions/delete-preview@main
+        with:
+          namespace: ${{ env.NAMESPACE }}

@@ -1,0 +1,12 @@
+name: "Delete Preview Environment"
+description: "Deletes a PR preview namespace"
+
+inputs:
+  namespace:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: bash "${GITHUB_ACTION_PATH}/delete.sh"
+      shell: bash

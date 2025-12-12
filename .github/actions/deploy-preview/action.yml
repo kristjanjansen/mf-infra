@@ -1,0 +1,20 @@
+name: "Deploy Preview Environment"
+description: "Deploys a PR preview to Kubernetes"
+
+inputs:
+  service_name:
+    required: true
+  port:
+    required: true
+  namespace:
+    required: true
+  image:
+    required: true
+  host:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: bash "${GITHUB_ACTION_PATH}/deploy.sh"
+      shell: bash
