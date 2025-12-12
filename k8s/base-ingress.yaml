@@ -1,17 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: SERVICE_NAME_PLACEHOLDER
+  name: ${SERVICE_NAME}
 spec:
   ingressClassName: nginx
   rules:
-    - host: HOST_PLACEHOLDER
+    - host: ${HOST}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: SERVICE_NAME_PLACEHOLDER
+                name: ${SERVICE_NAME}
                 port:
-                  number: PORT_PLACEHOLDER
+                  number: ${PORT}

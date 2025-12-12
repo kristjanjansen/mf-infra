@@ -10,34 +10,17 @@ kubectl get ns "$INPUT_NAMESPACE" >/dev/null 2>&1 \
 # Prepare temp directory
 mkdir -p .preview-temp
 
-# Copy and patch manifests
-sed \
-  -e "s/SERVICE_NAME_PLACEHOLDER/$INPUT_SERVICE_NAME/g" \
-  -e "s/IMAGE_PLACEHOLDER/$INPUT_IMAGE/g" \
-  -e "s/PORT_PLACEHOLDER/$INPUT_PORT/g" \
-  "$GITHUB_WORKSPACE/mf-infra/k8s/base-deployment.yaml" \
-  > .preview-temp/deployment.yaml
+# Copy and patch manifests using envsubst
+export SERVICE_NAME="$INPUT_SERVICE_NAME"
+export HOST="$INPUT_HOST"
+export PORT="$INPUT_PORT"
+export IMAGE="$INPUT_IMAGE"
 
-sed \
-  -e "s/SERVICE_NAME_PLACEHOLDER/$INPUT_SERVICE_NAME/g" \
-  -e "s/PORT_PLACEHOLDER/$INPUT_PORT/g" \
-  "$GITHUB_WORKSPACE/mf-infra/k8s/base-service.yaml" \
-  > .preview-temp/service.yaml
+envsubst < "$GITHUB_WORKSPACE/mf-infra/k8s/base-deployment.yaml" > .preview-temp/deployment.yaml
 
-echo "Source ingress.yaml content:"
-cat "$GITHUB_WORKSPACE/mf-infra/k8s/base-ingress.yaml"
-echo "---"
+envsubst < "$GITHUB_WORKSPACE/mf-infra/k8s/base-service.yaml" > .preview-temp/service.yaml
 
-sed \
-  -e "s/SERVICE_NAME_PLACEHOLDER/$INPUT_SERVICE_NAME/g" \
-  -e "s/HOST_PLACEHOLDER/$INPUT_HOST/g" \
-  -e "s/PORT_PLACEHOLDER/$INPUT_PORT/g" \
-  "$GITHUB_WORKSPACE/mf-infra/k8s/base-ingress.yaml" \
-  > .preview-temp/ingress.yaml
-
-echo "Generated ingress.yaml content:"
-cat .preview-temp/ingress.yaml
-echo "---"
+envsubst < "$GITHUB_WORKSPACE/mf-infra/k8s/base-ingress.yaml" > .preview-temp/ingress.yaml
 
 # Delete existing Ingress if it exists to avoid validation errors
 kubectl delete ingress "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" --ignore-not-found=true

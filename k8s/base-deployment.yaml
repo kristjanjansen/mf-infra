@@ -1,17 +1,19 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: SERVICE_NAME_PLACEHOLDER
+  name: ${SERVICE_NAME}
 spec:
-  ingressClassName: nginx
-  rules:
-    - host: HOST_PLACEHOLDER
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: SERVICE_NAME_PLACEHOLDER
-                port:
-                  number: PORT_PLACEHOLDER
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${SERVICE_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${SERVICE_NAME}
+    spec:
+      containers:
+        - name: ${SERVICE_NAME}
+          image: ${IMAGE}
+          ports:
+            - containerPort: ${PORT}
