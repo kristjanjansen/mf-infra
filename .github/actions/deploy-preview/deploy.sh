@@ -31,24 +31,29 @@ kubectl apply -n "$INPUT_NAMESPACE" -f .preview-temp
 # Inject services if .env.services exists
 if [ -f .env.services ]; then
   echo "🔧 Injecting .env.services"
-  JSON="{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"${INPUT_SERVICE_NAME}\",\"env\":["
-
+  
+  # Create a temporary file with the env variables
+  ENV_FILE=".preview-temp/env.json"
+  echo "[" > "$ENV_FILE"
+  
   FIRST=true
   while IFS= read -r line; do
     [[ "$line" =~ ^# ]] && continue
     [[ -z "$line" ]] && continue
     KEY=$(echo "$line" | cut -d '=' -f 1)
     VALUE=$(echo "$line" | cut -d '=' -f 2-)
-    if [ "$FIRST" = true ]; then FIRST=false; else JSON="${JSON},"; fi
-    JSON="${JSON}{\"name\":\"${KEY}\",\"value\":\"${VALUE}\"}"
+    if [ "$FIRST" = true ]; then FIRST=false; else echo "," >> "$ENV_FILE"; fi
+    echo "{\"name\":\"${KEY}\",\"value\":\"${VALUE}\"}" >> "$ENV_FILE"
   done < .env.services
-
-  JSON="${JSON}]}]}}}}"
-
+  
+  echo "]" >> "$ENV_FILE"
+  
+  # Use kubectl to set the env variables directly
+  ENV_VARS=$(cat "$ENV_FILE" | tr -d '\n')
   kubectl patch deployment "$INPUT_SERVICE_NAME" \
     -n "$INPUT_NAMESPACE" \
-    --type=merge \
-    -p "$JSON"
+    --type='json' \
+    -p="[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/env\",\"value\":${ENV_VARS}}]"
 fi
 
 kubectl rollout restart deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE"
