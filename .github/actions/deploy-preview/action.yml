@@ -18,3 +18,9 @@ runs:
   steps:
     - run: bash "${GITHUB_ACTION_PATH}/deploy.sh"
       shell: bash
+      env:
+        INPUT_SERVICE_NAME: ${{ inputs.service_name }}
+        INPUT_PORT: ${{ inputs.port }}
+        INPUT_NAMESPACE: ${{ inputs.namespace }}
+        INPUT_IMAGE: ${{ inputs.image }}
+        INPUT_HOST: ${{ inputs.host }}

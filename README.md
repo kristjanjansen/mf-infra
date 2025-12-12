@@ -27,7 +27,7 @@ jobs:
   preview:
     uses: kristjanjansen/mf-infra/.github/workflows/preview.yml@main
     with:
-      service_name: servicename
+      service_name: mf-apps
       port: 3000
 ```
 
@@ -46,7 +46,7 @@ jobs:
   preview:
     uses: kristjanjansen/mf-infra/.github/workflows/preview.yml@main
     with:
-      service_name: consumername
+      service_name: mf-host-web
       port: 3000
 ```
 
@@ -68,10 +68,10 @@ Install OrbStack:
 brew install orbstack kubectl act
 ```
 
-Enable Kubernetes:
+Run orbstack:
 
 ```bash
-orb kube enable
+orb
 ```
 
 Verify cluster readiness:
@@ -83,7 +83,7 @@ kubectl get nodes
 Expected output:
 
 ```
-orbstack-control-plane   Ready   control-plane   ...
+orbstack   Ready   control-plane,master   ...
 ```
 
 You now have a working local Kubernetes cluster.
@@ -104,8 +104,6 @@ Check status:
 kubectl get pods -n ingress-nginx
 ```
 
-Wait until all pods are running.
-
 Ingress routing is now enabled for `*.localtest.me` hostnames.
 
 ### Set Up a Self-Hosted GitHub Runner
@@ -121,27 +119,7 @@ Choose:
 - macOS
 - architecture: arm64 (Apple Silicon)
 
-Prepare local directory:
-
-```bash
-mkdir servicename-runner
-cd servicename-runner
-```
-
-Download runner files (via GitHub UI) and configure:
-
-```bash
-./config.sh --url https://github.com/<ORG>/<REPO> \
- --token <YOUR_RUNNER_TOKEN>
-```
-
-Start runner:
-
-```bash
-./run.sh
-```
-
-Leave it running.
+Follow the instructions in the GitHub UI to set up a self-hosted runner.
 
 ### Set up arc
 
