@@ -2,6 +2,10 @@
 set -e
 
 echo "🚀 Deploy preview for $INPUT_SERVICE_NAME in namespace $INPUT_NAMESPACE"
+echo "Debug: INPUT_HOST=$INPUT_HOST"
+echo "Debug: INPUT_SERVICE_NAME=$INPUT_SERVICE_NAME"
+echo "Debug: INPUT_PORT=$INPUT_PORT"
+echo "Debug: INPUT_IMAGE=$INPUT_IMAGE"
 
 # Ensure namespace exists
 kubectl get ns "$INPUT_NAMESPACE" >/dev/null 2>&1 \
@@ -30,6 +34,9 @@ sed \
   -e "s/PORT_PLACEHOLDER/$INPUT_PORT/g" \
   "$GITHUB_WORKSPACE/mf-infra/k8s/base-ingress.yaml" \
   > .preview-temp/ingress.yaml
+
+echo "Debug: Generated ingress.yaml:"
+cat .preview-temp/ingress.yaml
 
 # Apply manifests
 kubectl apply -n "$INPUT_NAMESPACE" -f .preview-temp
