@@ -24,12 +24,20 @@ sed \
   "$GITHUB_WORKSPACE/mf-infra/k8s/base-service.yaml" \
   > .preview-temp/service.yaml
 
+echo "Source ingress.yaml content:"
+cat "$GITHUB_WORKSPACE/mf-infra/k8s/base-ingress.yaml"
+echo "---"
+
 sed \
   -e "s/SERVICE_NAME_PLACEHOLDER/$INPUT_SERVICE_NAME/g" \
   -e "s/HOST_PLACEHOLDER/$INPUT_HOST/g" \
   -e "s/PORT_PLACEHOLDER/$INPUT_PORT/g" \
   "$GITHUB_WORKSPACE/mf-infra/k8s/base-ingress.yaml" \
   > .preview-temp/ingress.yaml
+
+echo "Generated ingress.yaml content:"
+cat .preview-temp/ingress.yaml
+echo "---"
 
 # Delete existing Ingress if it exists to avoid validation errors
 kubectl delete ingress "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" --ignore-not-found=true
