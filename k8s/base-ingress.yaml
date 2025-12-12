@@ -4,7 +4,7 @@ metadata:
   name: ${SERVICE_NAME}
   annotations:
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*.localtest.me"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "*"
 spec:
