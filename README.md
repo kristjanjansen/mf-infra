@@ -92,3 +92,5 @@ Go to:
 > GitHub → Repo → Settings → Actions → General → Workflow permissions
 
 Select "Read and write permissions".
+
+.
