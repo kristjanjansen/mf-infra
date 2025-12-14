@@ -79,4 +79,3 @@ fi
 
 kubectl rollout restart deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE"
 echo "✅ Preview deployed"
-#
