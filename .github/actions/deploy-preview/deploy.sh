@@ -35,8 +35,9 @@ if [ -f .env.services ]; then
   # Create a temporary file with the env variables
   ENV_FILE=".preview-temp/env.json"
   echo "[" > "$ENV_FILE"
-  
+ 
   FIRST=true
+  ENV_ARGS=()
   while IFS= read -r line; do
     [[ "$line" =~ ^# ]] && continue
     [[ -z "$line" ]] && continue
@@ -44,16 +45,18 @@ if [ -f .env.services ]; then
     VALUE=$(echo "$line" | cut -d '=' -f 2-)
     if [ "$FIRST" = true ]; then FIRST=false; else echo "," >> "$ENV_FILE"; fi
     echo "{\"name\":\"${KEY}\",\"value\":\"${VALUE}\"}" >> "$ENV_FILE"
+    ENV_ARGS+=("${KEY}=${VALUE}")
   done < .env.services
   
   echo "]" >> "$ENV_FILE"
   
   # Use kubectl to set the env variables directly
-  ENV_VARS=$(cat "$ENV_FILE" | tr -d '\n')
-  kubectl patch deployment "$INPUT_SERVICE_NAME" \
-    -n "$INPUT_NAMESPACE" \
-    --type='json' \
-    -p="[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/env\",\"value\":${ENV_VARS}}]"
+  if [ ${#ENV_ARGS[@]} -gt 0 ]; then
+    kubectl set env deployment "$INPUT_SERVICE_NAME" \
+      -n "$INPUT_NAMESPACE" \
+      --overwrite=true \
+      "${ENV_ARGS[@]}"
+  fi
 fi
 
 kubectl rollout restart deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE"
