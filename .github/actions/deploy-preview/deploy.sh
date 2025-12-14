@@ -32,48 +32,45 @@ kubectl apply -n "$INPUT_NAMESPACE" -f .preview-temp
 if [ -f .env.services ]; then
   echo "🔧 Injecting .env.services"
   
-  # Create a temporary file with the env variables
-  ENV_FILE=".preview-temp/env.json"
-  echo "[" > "$ENV_FILE"
- 
-  FIRST=true
   ENV_ARGS=()
-  while IFS= read -r line; do
-    [[ "$line" =~ ^# ]] && continue
+  while IFS= read -r line || [ -n "$line" ]; do
+    line=${line%$'\r'}
+    line=${line#${line%%[![:space:]]*}}
+    line=${line%${line##*[![:space:]]}}
+
     [[ -z "$line" ]] && continue
-    KEY=$(echo "$line" | cut -d '=' -f 1)
-    VALUE=$(echo "$line" | cut -d '=' -f 2-)
-    if [ "$FIRST" = true ]; then FIRST=false; else echo "," >> "$ENV_FILE"; fi
-    echo "{\"name\":\"${KEY}\",\"value\":\"${VALUE}\"}" >> "$ENV_FILE"
+    [[ "$line" =~ ^# ]] && continue
+
+    if [[ "$line" =~ ^export[[:space:]]+ ]]; then
+      line=${line#export }
+      line=${line#${line%%[![:space:]]*}}
+    fi
+
+    [[ "$line" != *"="* ]] && continue
+
+    KEY=${line%%=*}
+    VALUE=${line#*=}
+    KEY=${KEY#${KEY%%[![:space:]]*}}
+    KEY=${KEY%${KEY##*[![:space:]]}}
+    VALUE=${VALUE#${VALUE%%[![:space:]]*}}
+    VALUE=${VALUE%${VALUE##*[![:space:]]}}
+
+    if [[ "$VALUE" =~ ^\".*\"$ ]]; then
+      VALUE=${VALUE:1:${#VALUE}-2}
+    elif [[ "$VALUE" =~ ^\'.*\'$ ]]; then
+      VALUE=${VALUE:1:${#VALUE}-2}
+    fi
+
+    [[ -z "$KEY" ]] && continue
     ENV_ARGS+=("${KEY}=${VALUE}")
   done < .env.services
-  
-  echo "]" >> "$ENV_FILE"
-  
+
   # Use kubectl to set the env variables directly
   if [ ${#ENV_ARGS[@]} -gt 0 ]; then
-    echo "🔎 Parsed env keys:"
-    for kv in "${ENV_ARGS[@]}"; do
-      echo "- ${kv%%=*}"
-    done
-
     kubectl set env deployment "$INPUT_SERVICE_NAME" \
       -n "$INPUT_NAMESPACE" \
       --overwrite=true \
       "${ENV_ARGS[@]}"
-
-    echo "🔎 Verifying env injection on deployment..."
-    kubectl get deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" \
-      -o jsonpath='{.spec.template.spec.containers[0].env}'
-    echo
-
-    if ! kubectl get deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" \
-      -o jsonpath='{.spec.template.spec.containers[0].env[*].name}' \
-      | tr ' ' '\n' \
-      | grep -qx "BILLING_BACKEND_URL"; then
-      echo "❌ BILLING_BACKEND_URL was not found on the deployment after injection"
-      exit 1
-    fi
   fi
 fi
 

@@ -23,11 +23,6 @@ runs:
         path: mf-infra
         token: ${{ github.token }}
 
-    - run: |
-        echo "=== deploy.sh (first 80 lines) ==="
-        sed -n '1,80p' "${GITHUB_ACTION_PATH}/deploy.sh"
-      shell: bash
-
     - run: bash "${GITHUB_ACTION_PATH}/deploy.sh"
       shell: bash
       env:
