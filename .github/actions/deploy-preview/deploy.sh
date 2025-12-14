@@ -52,10 +52,28 @@ if [ -f .env.services ]; then
   
   # Use kubectl to set the env variables directly
   if [ ${#ENV_ARGS[@]} -gt 0 ]; then
+    echo "🔎 Parsed env keys:"
+    for kv in "${ENV_ARGS[@]}"; do
+      echo "- ${kv%%=*}"
+    done
+
     kubectl set env deployment "$INPUT_SERVICE_NAME" \
       -n "$INPUT_NAMESPACE" \
       --overwrite=true \
       "${ENV_ARGS[@]}"
+
+    echo "🔎 Verifying env injection on deployment..."
+    kubectl get deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" \
+      -o jsonpath='{.spec.template.spec.containers[0].env}'
+    echo
+
+    if ! kubectl get deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" \
+      -o jsonpath='{.spec.template.spec.containers[0].env[*].name}' \
+      | tr ' ' '\n' \
+      | grep -qx "BILLING_BACKEND_URL"; then
+      echo "❌ BILLING_BACKEND_URL was not found on the deployment after injection"
+      exit 1
+    fi
   fi
 fi
 
