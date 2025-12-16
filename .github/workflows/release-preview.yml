@@ -113,6 +113,5 @@ jobs:
         shell: bash
         run: |
           {
-            echo "## Release preview"
             echo "http://$HOST"
           } >> "$GITHUB_STEP_SUMMARY"
