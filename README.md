@@ -60,7 +60,7 @@ on:
 
 jobs:
   preview:
-    uses: kristjanjansen/mf-infra/.github/workflows/preview.yml@main
+    uses: kristjanjansen/mf-infra/.github/workflows/pr-preview.yml@main
     with:
       service_name: my-service
       port: 4000

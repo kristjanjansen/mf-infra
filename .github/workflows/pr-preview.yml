@@ -1,4 +1,4 @@
-name: Preview Environment
+name: PR Preview Environment
 
 on:
   workflow_call:
