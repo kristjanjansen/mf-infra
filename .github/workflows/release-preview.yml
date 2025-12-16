@@ -108,3 +108,11 @@ jobs:
           image: ${{ env.IMAGE }}
           host: ${{ env.HOST }}
           port: ${{ env.PORT }}
+
+      - name: Write summary
+        shell: bash
+        run: |
+          {
+            echo "## Release preview"
+            echo "http://$HOST"
+          } >> "$GITHUB_STEP_SUMMARY"
