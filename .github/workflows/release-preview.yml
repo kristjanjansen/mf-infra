@@ -1,0 +1,110 @@
+name: Release Preview
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      port:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+    outputs:
+      safe_version:
+        description: "Sanitized version suitable for names (e.g. 1-2-3)"
+        value: ${{ jobs.release_preview.outputs.safe_version }}
+      version_no_v:
+        description: "Normalized version without leading v/V (e.g. 1.2.3)"
+        value: ${{ jobs.release_preview.outputs.version_no_v }}
+      tag_version:
+        description: "Normalized tag version (e.g. v1.2.3)"
+        value: ${{ jobs.release_preview.outputs.tag_version }}
+      namespace:
+        description: "Kubernetes namespace deployed to"
+        value: ${{ jobs.release_preview.outputs.namespace }}
+      host:
+        description: "Preview host"
+        value: ${{ jobs.release_preview.outputs.host }}
+      url:
+        description: "Preview URL"
+        value: ${{ jobs.release_preview.outputs.url }}
+
+jobs:
+  release_preview:
+    runs-on: self-hosted
+
+    permissions:
+      pull-requests: read
+      contents: read
+
+    env:
+      SERVICE_NAME: ${{ inputs.service_name }}
+      PORT: ${{ inputs.port }}
+
+    outputs:
+      safe_version: ${{ steps.compute.outputs.safe_version }}
+      version_no_v: ${{ steps.compute.outputs.version_no_v }}
+      tag_version: ${{ steps.compute.outputs.tag_version }}
+      namespace: ${{ steps.compute.outputs.namespace }}
+      host: ${{ steps.compute.outputs.host }}
+      url: ${{ steps.compute.outputs.url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute release preview identifiers
+        id: compute
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RAW='${{ inputs.version }}'
+          TOKEN="${RAW%% *}"
+
+          VERSION_NO_V="$TOKEN"
+          if [[ "$VERSION_NO_V" =~ ^[vV](.+)$ ]]; then
+            VERSION_NO_V="${BASH_REMATCH[1]}"
+          fi
+
+          SAFE_VERSION="$(echo "$VERSION_NO_V" | tr -c 'a-zA-Z0-9' '-' | tr -s '-' | sed 's/^-*//;s/-*$//')"
+          if [ -z "$SAFE_VERSION" ]; then
+            SAFE_VERSION="0-0-0"
+          fi
+
+          SUFFIX="rel-${SAFE_VERSION}"
+
+          NAMESPACE="${SERVICE_NAME}-${SUFFIX}"
+          HOST="${SERVICE_NAME}-${SUFFIX}.localtest.me"
+          URL="http://${HOST}"
+          IMAGE="${SERVICE_NAME}:${SUFFIX}"
+          TAG_VERSION="v${VERSION_NO_V}"
+
+          echo "NAMESPACE=${NAMESPACE}" >> "$GITHUB_ENV"
+          echo "HOST=${HOST}" >> "$GITHUB_ENV"
+          echo "URL=${URL}" >> "$GITHUB_ENV"
+          echo "IMAGE=${IMAGE}" >> "$GITHUB_ENV"
+
+          echo "safe_version=${SAFE_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "version_no_v=${VERSION_NO_V}" >> "$GITHUB_OUTPUT"
+          echo "tag_version=${TAG_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "namespace=${NAMESPACE}" >> "$GITHUB_OUTPUT"
+          echo "host=${HOST}" >> "$GITHUB_OUTPUT"
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg SERVICE_NAME="$SERVICE_NAME" \
+            -t "$IMAGE" .
+
+      - name: Deploy release preview via infra action
+        uses: kristjanjansen/mf-infra/.github/actions/deploy-preview@main
+        with:
+          service_name: ${{ env.SERVICE_NAME }}
+          namespace: ${{ env.NAMESPACE }}
+          image: ${{ env.IMAGE }}
+          host: ${{ env.HOST }}
+          port: ${{ env.PORT }}
