@@ -8,10 +8,10 @@ Microfrontends infrastructure.
 
 https://github.com/kristjanjansen/mf-frontends
 
-http://mf-layout-pr-1.localtest.me
-http://mf-navigation-pr-1.localtest.me
-http://mf-dashboard-pr-1.localtest.me
-http://mf-billing-pr-1.localtest.me
+- http://mf-layout-pr-2.localtest.me
+- http://mf-navigation-pr-2.localtest.me
+- http://mf-dashboard-pr-2.localtest.me
+- http://mf-billing-pr-2.localtest.me
 
 ## mf-api
 
