@@ -2,6 +2,9 @@ name: "Comment Preview URL"
 description: "Creates/updates a sticky PR comment with the preview URL"
 
 inputs:
+  header:
+    required: false
+    default: "Preview"
   message:
     required: true
 
@@ -10,6 +13,6 @@ runs:
   steps:
     - uses: marocchino/sticky-pull-request-comment@v2
       with:
-        header: "Preview"
+        header: ${{ inputs.header }}
         recreate: true
         message: ${{ inputs.message }}

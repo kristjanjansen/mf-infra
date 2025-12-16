@@ -71,6 +71,7 @@ jobs:
       - name: Comment PR
         uses: kristjanjansen/mf-infra/.github/actions/comment-preview@main
         with:
+          header: Preview - ${{ env.SERVICE_NAME }}
           message: |
             🚀 Preview ready: http://${{ env.HOST }}
 
