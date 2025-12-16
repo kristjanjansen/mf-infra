@@ -4,32 +4,33 @@ Microfrontends infrastructure.
 
 ## Links
 
+## mf-host-web
+
+https://github.com/kristjanjansen/mf-host-web
+
+http://mf-host-web-rel-0-0-4.localtest.me
+
 ## mf-frontends
 
 https://github.com/kristjanjansen/mf-frontends
 
-- http://mf-layout-pr-2.localtest.me
-- http://mf-navigation-pr-2.localtest.me
-- http://mf-dashboard-pr-2.localtest.me
-- http://mf-billing-pr-2.localtest.me
+- http://mf-layout-rel-0-0-4.localtest.me
+- http://mf-navigation-rel-0-0-4.localtest.me
+- http://mf-billing-rel-0-0-4.localtest.me
+- http://mf-dashboard-rel-0-0-4.localtest.me
+- http://mf-cookiebot-rel-0-0-4.localtest.me
 
 ## mf-api
 
 https://github.com/kristjanjansen/mf-api
 
-http://mf-api-pr-1.localtest.me
+http://mf-api-rel-0-0-1.localtest.me
 
 ## mf-translations
 
 https://github.com/kristjanjansen/mf-translations
 
-http://mf-translations-pr-1.localtest.me
-
-## mf-infra
-
-https://github.com/kristjanjansen/mf-host-web
-
-http://mf-host-web-pr-10.localtest.me
+http://mf-translations-rel-0-0-1.localtest.me
 
 ## Overview
 
@@ -37,22 +38,19 @@ Centralized infrastructure for **multi-repo PR preview environments**.
 
 This repo provides:
 
-- Reusable GitHub Actions:
-  - `deploy-preview` – deploy PR preview to Kubernetes
-  - `delete-preview` – delete preview namespace on PR close
-  - `comment-preview` – PR comment with preview URL
+- Preview and release deployment logic
+- Reusable GitHub Actions
 - Shared Kubernetes base manifests (deployment, service, ingress)
-- Single-source preview deployment logic
 - Local action runner via self-hosted Github Actions runner and OrbStack Kubernetes
 
-## Create service preview
+## Create PR preview
 
 Add `Dockerfile` to your service that exposes port `4000` or similar.
 
-Then add `.github/workflows/preview.yml`:
+Then add `.github/workflows/pr-preview.yml`:
 
 ```yml
-name: Preview
+name: PR Preview
 
 on:
   pull_request:
@@ -67,6 +65,32 @@ jobs:
 ```
 
 When creating pull requires with id of `123`, your service will now be available at `https://my-service-pr-123.localtest.me`.
+
+## Create release preview
+
+Then add `.github/workflows/release-preview.yml`:
+
+```yml
+name: Release Preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version"
+        required: true
+        type: string
+
+jobs:
+  release_preview:
+    uses: kristjanjansen/mf-infra/.github/workflows/release-preview.yml@main
+    with:
+      service_name: mf-api
+      port: 4000
+      version: ${{ inputs.version }}
+```
+
+You will manually run the workflow in Github entering version number like `1.2.3` After running the preview will be available at `https://my-service-rel-1-2-3.localtest.me`.
 
 ## Local setup on Mac
 
