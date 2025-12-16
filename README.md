@@ -1,4 +1,37 @@
-# Micofrontends infra
+# mf-infra
+
+Microfrontends infrastructure.
+
+## Links
+
+## mf-frontends
+
+https://github.com/kristjanjansen/mf-frontends
+
+http://mf-layout-pr-1.localtest.me
+http://mf-navigation-pr-1.localtest.me
+http://mf-dashboard-pr-1.localtest.me
+http://mf-billing-pr-1.localtest.me
+
+## mf-api
+
+https://github.com/kristjanjansen/mf-api
+
+http://mf-api-pr-1.localtest.me
+
+## mf-translations
+
+https://github.com/kristjanjansen/mf-translations
+
+http://mf-translations-pr-1.localtest.me
+
+## mf-infra
+
+https://github.com/kristjanjansen/mf-host-web
+
+http://mf-host-web-pr-10.localtest.me
+
+## Overview
 
 Centralized infrastructure for **multi-repo PR preview environments**.
 
@@ -92,5 +125,3 @@ Go to:
 > GitHub → Repo → Settings → Actions → General → Workflow permissions
 
 Select "Read and write permissions".
-
-.
