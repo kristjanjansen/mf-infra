@@ -28,6 +28,17 @@ runs:
           exit 1
         fi
 
+        CODE="$(curl -sS -o /dev/null -w "%{http_code}" \
+          -H "Authorization: token ${{ inputs.token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/kristjanjansen/mf-infra || echo "000")"
+
+        if [ "${CODE}" != "200" ]; then
+          echo "Token validation failed: GitHub API responded with HTTP ${CODE} for repo kristjanjansen/mf-infra" >&2
+          echo "Ensure the token has repository access to kristjanjansen/mf-infra and Contents: read/write." >&2
+          exit 1
+        fi
+
     - name: Checkout mf-infra
       uses: actions/checkout@v4
       with:
