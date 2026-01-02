@@ -59,6 +59,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Infra token present?
+        shell: bash
+        run: |
+          if [ -n "${INFRA_TOKEN}" ]; then
+            echo "infra_token_present=true"
+          else
+            echo "infra_token_present=false"
+          fi
+
       - name: Compute release preview identifiers
         id: compute
         shell: bash
