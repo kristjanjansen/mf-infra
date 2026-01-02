@@ -7,21 +7,8 @@ if (!eventFile) {
   process.exit(1);
 }
 
-const {
-  TS,
-  SOURCE_REPO,
-  WORKFLOW,
-  RUN_ID,
-  RUN_ATTEMPT,
-  RUN_URL,
-  APP_NAME,
-  ENVIRONMENT,
-  DEPLOY_URL,
-  STATUS,
-  SHA,
-  REF,
-  INFRA_REF,
-} = process.env;
+const { TS, APP_NAME, ENVIRONMENT, DEPLOY_URL, STATUS, INFRA_REF } =
+  process.env;
 
 if (!APP_NAME || !ENVIRONMENT || !DEPLOY_URL) {
   console.error(
@@ -32,17 +19,10 @@ if (!APP_NAME || !ENVIRONMENT || !DEPLOY_URL) {
 
 const payload = {
   timestamp: TS || "",
-  source_repo: SOURCE_REPO || "",
-  workflow: WORKFLOW || "",
-  run_id: RUN_ID || "",
-  run_attempt: RUN_ATTEMPT || "",
-  run_url: RUN_URL || "",
   app_name: APP_NAME,
   environment: ENVIRONMENT,
   deploy_url: DEPLOY_URL,
   status: STATUS || "success",
-  git_sha: SHA || "",
-  ref: REF || "",
 };
 
 if (INFRA_REF) payload.infra_ref = INFRA_REF;

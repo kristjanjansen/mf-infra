@@ -26,6 +26,7 @@ runs:
       with:
         repository: kristjanjansen/mf-infra
         path: mf-infra
+        ref: main
         token: ${{ inputs.token != '' && inputs.token || github.token }}
 
     - name: Setup Node
