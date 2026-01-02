@@ -31,6 +31,9 @@ on:
       url:
         description: "Preview URL"
         value: ${{ jobs.release_preview.outputs.url }}
+    secrets:
+      infra_token:
+        required: false
 
 jobs:
   release_preview:
@@ -43,6 +46,7 @@ jobs:
     env:
       SERVICE_NAME: ${{ inputs.service_name }}
       PORT: ${{ inputs.port }}
+      INFRA_TOKEN: ${{ secrets.infra_token }}
 
     outputs:
       safe_version: ${{ steps.compute.outputs.safe_version }}
@@ -108,6 +112,17 @@ jobs:
           image: ${{ env.IMAGE }}
           host: ${{ env.HOST }}
           port: ${{ env.PORT }}
+
+      - name: Record deploy event
+        if: ${{ env.INFRA_TOKEN != '' }}
+        uses: kristjanjansen/mf-infra/.github/actions/record-deploy-event@main
+        with:
+          token: ${{ env.INFRA_TOKEN }}
+          app_name: ${{ env.SERVICE_NAME }}
+          environment: rel
+          deploy_url: ${{ env.URL }}
+          status: ${{ job.status }}
+          infra_ref: main
 
       - name: Write summary
         shell: bash

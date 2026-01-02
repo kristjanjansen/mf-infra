@@ -9,7 +9,9 @@ on:
       port:
         required: true
         type: string
-    secrets: {}
+    secrets:
+      infra_token:
+        required: false
 
 jobs:
   preview:
@@ -17,11 +19,13 @@ jobs:
     permissions:
       pull-requests: write
       issues: write
+      contents: read
 
     env:
       SERVICE_NAME: ${{ inputs.service_name }}
       PORT: ${{ inputs.port }}
       PR: ${{ github.event.number || 1 }}
+      INFRA_TOKEN: ${{ secrets.infra_token }}
 
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +39,7 @@ jobs:
           TITLE='${{ github.event.pull_request.title || '' }}'
 
           SUFFIX="pr-${PR_NUMBER}"
+          EVENT_ENVIRONMENT="pr"
 
           shopt -s nocasematch
           if [[ "$TITLE" =~ ^RELEASE[[:space:]]+([^[:space:]]+).*$ ]]; then
@@ -46,12 +51,15 @@ jobs:
             fi
 
             SUFFIX="rel-${SAFE_VERSION}"
+            EVENT_ENVIRONMENT="rel"
           fi
           shopt -u nocasematch
 
           echo "NAMESPACE=${SERVICE_NAME}-${SUFFIX}" >> "$GITHUB_ENV"
           echo "IMAGE=${SERVICE_NAME}:${SUFFIX}" >> "$GITHUB_ENV"
           echo "HOST=${SERVICE_NAME}-${SUFFIX}.localtest.me" >> "$GITHUB_ENV"
+          echo "DEPLOY_URL=http://${SERVICE_NAME}-${SUFFIX}.localtest.me" >> "$GITHUB_ENV"
+          echo "EVENT_ENVIRONMENT=${EVENT_ENVIRONMENT}" >> "$GITHUB_ENV"
 
       - name: Build Docker image
         run: |
@@ -74,6 +82,17 @@ jobs:
           header: Preview - ${{ env.SERVICE_NAME }}
           message: |
             🚀 Preview ready: http://${{ env.HOST }}
+
+      - name: Record deploy event
+        if: ${{ env.INFRA_TOKEN != '' }}
+        uses: kristjanjansen/mf-infra/.github/actions/record-deploy-event@main
+        with:
+          token: ${{ env.INFRA_TOKEN }}
+          app_name: ${{ env.SERVICE_NAME }}
+          environment: ${{ env.EVENT_ENVIRONMENT }}
+          deploy_url: ${{ env.DEPLOY_URL }}
+          status: ${{ job.status }}
+          infra_ref: main
 
   cleanup:
     if: github.event.action == 'closed'

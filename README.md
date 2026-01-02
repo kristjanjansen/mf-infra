@@ -62,6 +62,8 @@ jobs:
     with:
       service_name: my-service
       port: 4000
+    secrets:
+      infra_token: ${{ secrets.INFRA_TOKEN }}
 ```
 
 When creating pull requires with id of `123`, your service will now be available at `https://my-service-pr-123.localtest.me`.
@@ -88,9 +90,17 @@ jobs:
       service_name: mf-api
       port: 4000
       version: ${{ inputs.version }}
+    secrets:
+      infra_token: ${{ secrets.INFRA_TOKEN }}
 ```
 
 You will manually run the workflow in Github entering version number like `1.2.3` After running the preview will be available at `https://my-service-rel-1-2-3.localtest.me`.
+
+## Deploy event recording
+
+Deploy workflows call the composite action `record-deploy-event`, which commits a single JSON file per run into `events/YYYY/MM/DD/...`.
+
+The `Aggregate datasets` workflow is triggered by pushes to `events/**` and debounces bursts before regenerating `datasets/events.json` and `datasets/deps.json`.
 
 ## Local setup on Mac
 
@@ -150,4 +160,11 @@ Go to:
 
 Select "Read and write permissions".
 
-.
+## Dashboard
+
+This repo generates:
+
+- `datasets/events.json` (aggregated deploy events)
+- `datasets/deps.json` (dependency tree for the dashboard)
+
+The dashboard is served from `index.html` and loads `./datasets/deps.json`.

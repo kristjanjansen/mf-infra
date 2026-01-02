@@ -1,0 +1,44 @@
+name: "Record Deploy Event"
+description: "Writes a deploy event into mf-infra/events and pushes it to the mf-infra repo"
+
+inputs:
+  token:
+    required: false
+    default: ""
+  app_name:
+    required: true
+  environment:
+    required: true
+  deploy_url:
+    required: true
+  status:
+    required: false
+    default: "success"
+  infra_ref:
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout mf-infra
+      uses: actions/checkout@v4
+      with:
+        repository: kristjanjansen/mf-infra
+        path: mf-infra
+        token: ${{ inputs.token != '' && inputs.token || github.token }}
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+
+    - name: Record event
+      shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/record.sh"
+      env:
+        INPUT_APP_NAME: ${{ inputs.app_name }}
+        INPUT_ENVIRONMENT: ${{ inputs.environment }}
+        INPUT_DEPLOY_URL: ${{ inputs.deploy_url }}
+        INPUT_STATUS: ${{ inputs.status }}
+        INPUT_INFRA_REF: ${{ inputs.infra_ref }}

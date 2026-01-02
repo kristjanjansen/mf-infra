@@ -1,0 +1,66 @@
+#!/bin/bash
+set -euo pipefail
+
+ROOT_DIR="${GITHUB_WORKSPACE}/mf-infra"
+
+APP_NAME="${INPUT_APP_NAME:?missing app_name}"
+ENVIRONMENT="${INPUT_ENVIRONMENT:?missing environment}"
+DEPLOY_URL="${INPUT_DEPLOY_URL:?missing deploy_url}"
+STATUS="${INPUT_STATUS:-success}"
+INFRA_REF="${INPUT_INFRA_REF:-}"
+
+TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+Y="$(date -u +%Y)"
+M="$(date -u +%m)"
+D="$(date -u +%d)"
+
+SOURCE_REPO="${GITHUB_REPOSITORY:-}"
+WORKFLOW="${GITHUB_WORKFLOW:-}"
+RUN_ID="${GITHUB_RUN_ID:-}"
+RUN_ATTEMPT="${GITHUB_RUN_ATTEMPT:-}"
+SHA="${GITHUB_SHA:-}"
+REF="${GITHUB_REF:-}"
+SERVER_URL="${GITHUB_SERVER_URL:-https://github.com}"
+RUN_URL="${SERVER_URL}/${SOURCE_REPO}/actions/runs/${RUN_ID}"
+
+EVENT_DIR="${ROOT_DIR}/events/${Y}/${M}/${D}"
+mkdir -p "${EVENT_DIR}"
+
+SAFE_REPO="${SOURCE_REPO//\//_}"
+EVENT_FILE="${EVENT_DIR}/${SAFE_REPO}_${RUN_ID}_${RUN_ATTEMPT}.json"
+
+export TS
+export SOURCE_REPO
+export WORKFLOW
+export RUN_ID
+export RUN_ATTEMPT
+export RUN_URL
+export APP_NAME
+export ENVIRONMENT
+export DEPLOY_URL
+export STATUS
+export SHA
+export REF
+export INFRA_REF
+
+node "${GITHUB_ACTION_PATH}/record.mjs" "${EVENT_FILE}"
+
+cd "${ROOT_DIR}"
+
+git config user.name "github-actions[bot]"
+git config user.email "github-actions[bot]@users.noreply.github.com"
+
+git add "${EVENT_FILE#${ROOT_DIR}/}"
+
+git commit -m "chore: record deploy event (${APP_NAME}/${ENVIRONMENT})" || exit 0
+
+for i in 1 2 3 4 5; do
+  git pull --rebase origin main || true
+  if git push origin HEAD:main; then
+    exit 0
+  fi
+  sleep $((i * 2))
+done
+
+echo "Failed to push deploy event after retries" >&2
+exit 1

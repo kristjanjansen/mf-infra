@@ -1,0 +1,61 @@
+name: Aggregate datasets
+
+on:
+  push:
+    paths:
+      - "events/**"
+
+concurrency:
+  group: datasets
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Debounce
+        shell: bash
+        run: sleep 90
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build datasets
+        shell: bash
+        run: node .github/workflows/aggregate-datasets.mjs
+
+      - name: Commit datasets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git pull --rebase origin main
+
+          git add datasets/events.json datasets/deps.json || true
+
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+
+          git commit -m "chore: update datasets [skip agg]"
+
+          for i in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            git pull --rebase origin main || true
+            sleep $((i * 2))
+          done
+
+          echo "Failed to push datasets after retries" >&2
+          exit 1
