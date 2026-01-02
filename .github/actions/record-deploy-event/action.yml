@@ -3,8 +3,7 @@ description: "Writes a deploy event into mf-infra/events and pushes it to the mf
 
 inputs:
   token:
-    required: false
-    default: ""
+    required: true
   app_name:
     required: true
   environment:
@@ -21,13 +20,21 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Validate token
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.token }}" ]; then
+          echo "Missing required input: token" >&2
+          exit 1
+        fi
+
     - name: Checkout mf-infra
       uses: actions/checkout@v4
       with:
         repository: kristjanjansen/mf-infra
         path: mf-infra
         ref: main
-        token: ${{ inputs.token != '' && inputs.token || github.token }}
+        token: ${{ inputs.token }}
 
     - name: Setup Node
       uses: actions/setup-node@v4
