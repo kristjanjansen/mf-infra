@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T10:20:23.228Z",
+  "generated_at": "2026-01-03T10:21:21.422Z",
   "events": [
     {
       "timestamp": "2026-01-03T09:24:06Z",
@@ -256,6 +256,27 @@
           "app_name": "mf-cookiebot",
           "environment": "rel",
           "deploy_url": "http://mf-cookiebot-rel-0-0-4.localtest.me"
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-01-03T10:21:05Z",
+      "app_name": "mf-layout",
+      "environment": "pr",
+      "deploy_url": "http://mf-layout-pr-3.localtest.me",
+      "status": "success",
+      "services": [
+        {
+          "timestamp": "2026-01-03T10:21:05Z",
+          "app_name": "mf-translations",
+          "environment": "rel",
+          "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me"
+        },
+        {
+          "timestamp": "2026-01-03T10:21:05Z",
+          "app_name": "mf-api",
+          "environment": "rel",
+          "deploy_url": "http://mf-api-rel-0-0-1.localtest.me"
         }
       ]
     }
