@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-01-03T10:46:24Z",
-  "app_name": "mf-navigation",
+  "timestamp": "2026-01-03T10:46:53Z",
+  "app_name": "mf-billing",
   "environment": "pr",
-  "deploy_url": "http://mf-navigation-pr-3.localtest.me",
+  "deploy_url": "http://mf-billing-pr-3.localtest.me",
   "status": "success",
   "services": [
     {
-      "timestamp": "2026-01-03T10:46:24Z",
+      "timestamp": "2026-01-03T10:46:53Z",
       "app_name": "mf-translations",
       "environment": "pr",
       "deploy_url": "http://mf-translations-pr-2.localtest.me"
     },
     {
-      "timestamp": "2026-01-03T10:46:24Z",
+      "timestamp": "2026-01-03T10:46:53Z",
       "app_name": "mf-api",
       "environment": "rel",
       "deploy_url": "http://mf-api-rel-0-0-1.localtest.me"
