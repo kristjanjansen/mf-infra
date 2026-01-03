@@ -55,47 +55,6 @@ function formatUpdated(ts) {
   }
 }
 
-function formatAgo(ts) {
-  if (!ts) return "";
-  try {
-    const then = Temporal.Instant.from(ts);
-    const now = Temporal.Now.instant();
-    const diff = now.since(then);
-
-    const totalSeconds = Math.max(
-      0,
-      Math.round(diff.total({ unit: "seconds" }))
-    );
-    if (totalSeconds < 45) return "just now";
-
-    const minutes = Math.round(totalSeconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
-
-    const hours = Math.round(minutes / 60);
-    if (hours < 48) return `${hours}h ago`;
-
-    const days = Math.round(hours / 24);
-    return `${days}d ago`;
-  } catch {
-    try {
-      const then = new Date(ts);
-      const now = new Date();
-      if (Number.isNaN(then.getTime())) return "";
-      const ms = Math.max(0, now.getTime() - then.getTime());
-      const sec = Math.round(ms / 1000);
-      if (sec < 45) return "just now";
-      const min = Math.round(sec / 60);
-      if (min < 60) return `${min}m ago`;
-      const hr = Math.round(min / 60);
-      if (hr < 48) return `${hr}h ago`;
-      const d = Math.round(hr / 24);
-      return `${d}d ago`;
-    } catch {
-      return "";
-    }
-  }
-}
-
 function render(treeData) {
   clear();
 
@@ -171,16 +130,6 @@ function render(treeData) {
       line.target = "_blank";
       line.rel = "noreferrer";
       div.appendChild(line);
-    }
-
-    if (n.data?.meta?.last_timestamp) {
-      const ago = formatAgo(n.data.meta.last_timestamp);
-      if (ago) {
-        const line = document.createElement("div");
-        line.className = "ago";
-        line.textContent = ago;
-        div.appendChild(line);
-      }
     }
 
     const left = n.y + shiftX;
