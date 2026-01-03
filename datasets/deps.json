@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T10:46:12.393Z",
+  "generated_at": "2026-01-03T10:46:38.295Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
@@ -30,7 +30,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:45:55Z",
+                  "last_timestamp": "2026-01-03T10:46:24Z",
                   "status": ""
                 }
               },
@@ -72,7 +72,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:45:55Z",
+                  "last_timestamp": "2026-01-03T10:46:24Z",
                   "status": ""
                 }
               },
@@ -92,9 +92,19 @@
             "id": "mf-layout",
             "label": "mf-layout",
             "meta": {
+              "environment": "rel",
+              "deploy_url": "http://mf-layout-rel-0-0-4.localtest.me",
+              "last_timestamp": "2026-01-03T10:40:56Z",
+              "status": ""
+            }
+          },
+          {
+            "id": "mf-navigation",
+            "label": "mf-navigation",
+            "meta": {
               "environment": "pr",
-              "deploy_url": "http://mf-layout-pr-3.localtest.me",
-              "last_timestamp": "2026-01-03T10:45:55Z",
+              "deploy_url": "http://mf-navigation-pr-3.localtest.me",
+              "last_timestamp": "2026-01-03T10:46:24Z",
               "status": "success"
             },
             "children": [
@@ -104,7 +114,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:45:55Z",
+                  "last_timestamp": "2026-01-03T10:46:24Z",
                   "status": ""
                 }
               },
@@ -119,16 +129,6 @@
                 }
               }
             ]
-          },
-          {
-            "id": "mf-navigation",
-            "label": "mf-navigation",
-            "meta": {
-              "environment": "rel",
-              "deploy_url": "http://mf-navigation-rel-0-0-4.localtest.me",
-              "last_timestamp": "2026-01-03T10:40:56Z",
-              "status": ""
-            }
           }
         ]
       }
