@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T09:51:47.547Z",
+  "generated_at": "2026-01-03T09:52:15.106Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
@@ -30,7 +30,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T09:51:28Z",
+                  "last_timestamp": "2026-01-03T09:51:57Z",
                   "status": ""
                 }
               },
@@ -40,7 +40,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T09:51:28Z",
+                  "last_timestamp": "2026-01-03T09:51:57Z",
                   "status": ""
                 }
               }
@@ -50,33 +50,11 @@
             "id": "mf-cookiebot",
             "label": "mf-cookiebot",
             "meta": {
-              "environment": "pr",
-              "deploy_url": "http://mf-cookiebot-pr-3.localtest.me",
-              "last_timestamp": "2026-01-03T09:51:28Z",
-              "status": "success"
-            },
-            "children": [
-              {
-                "id": "mf-api",
-                "label": "mf-api",
-                "meta": {
-                  "environment": "rel",
-                  "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T09:51:28Z",
-                  "status": ""
-                }
-              },
-              {
-                "id": "mf-translations",
-                "label": "mf-translations",
-                "meta": {
-                  "environment": "rel",
-                  "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T09:51:28Z",
-                  "status": ""
-                }
-              }
-            ]
+              "environment": "rel",
+              "deploy_url": "http://mf-cookiebot-rel-0-0-4.localtest.me",
+              "last_timestamp": "2026-01-03T09:40:05Z",
+              "status": ""
+            }
           },
           {
             "id": "mf-dashboard",
@@ -102,11 +80,33 @@
             "id": "mf-navigation",
             "label": "mf-navigation",
             "meta": {
-              "environment": "rel",
-              "deploy_url": "http://mf-navigation-rel-0-0-4.localtest.me",
-              "last_timestamp": "2026-01-03T09:40:05Z",
-              "status": ""
-            }
+              "environment": "pr",
+              "deploy_url": "http://mf-navigation-pr-3.localtest.me",
+              "last_timestamp": "2026-01-03T09:51:57Z",
+              "status": "success"
+            },
+            "children": [
+              {
+                "id": "mf-api",
+                "label": "mf-api",
+                "meta": {
+                  "environment": "rel",
+                  "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
+                  "last_timestamp": "2026-01-03T09:51:57Z",
+                  "status": ""
+                }
+              },
+              {
+                "id": "mf-translations",
+                "label": "mf-translations",
+                "meta": {
+                  "environment": "rel",
+                  "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
+                  "last_timestamp": "2026-01-03T09:51:57Z",
+                  "status": ""
+                }
+              }
+            ]
           }
         ]
       }
