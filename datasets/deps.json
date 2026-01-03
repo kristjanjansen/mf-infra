@@ -1,8 +1,19 @@
 {
-  "generated_at": "",
+  "generated_at": "2026-01-03T08:58:28.552Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
-    "children": []
+    "children": [
+      {
+        "id": "mf-host-web",
+        "label": "mf-host-web",
+        "meta": {
+          "environment": "pr",
+          "deploy_url": "http://mf-host-web-pr-11.localtest.me",
+          "last_timestamp": "2026-01-03T08:56:46Z",
+          "status": "success"
+        }
+      }
+    ]
   }
 }
