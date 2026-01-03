@@ -67,7 +67,7 @@ body {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(6px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  transform: translate(-50%, -50%);
+  transform: translate(0, -50%);
 }
 
 .node .name {
@@ -103,15 +103,15 @@ body {
 }
 
 .badge-pr {
-  background: rgba(59, 130, 246, 0.18);
-  border-color: rgba(59, 130, 246, 0.35);
-  color: rgba(191, 219, 254, 0.95);
+  background: rgba(96, 165, 250, 0.14);
+  border-color: rgba(96, 165, 250, 0.32);
+  color: rgba(219, 234, 254, 0.95);
 }
 
 .badge-rel {
-  background: rgba(34, 197, 94, 0.16);
-  border-color: rgba(34, 197, 94, 0.35);
-  color: rgba(187, 247, 208, 0.95);
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.3);
+  color: rgba(220, 252, 231, 0.95);
 }
 
 .badge-unknown {

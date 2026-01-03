@@ -26,6 +26,35 @@ function clear() {
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 }
 
+function formatUpdated(ts) {
+  try {
+    const zdt = Temporal.Instant.from(ts).toZonedDateTimeISO(
+      Temporal.Now.timeZoneId()
+    );
+    const dd = String(zdt.day).padStart(2, "0");
+    const mm = String(zdt.month).padStart(2, "0");
+    const yyyy = String(zdt.year);
+    const hh = String(zdt.hour).padStart(2, "0");
+    const min = String(zdt.minute).padStart(2, "0");
+    const ss = String(zdt.second).padStart(2, "0");
+    return `Last updated ${dd}.${mm}.${yyyy} ${hh}:${min}:${ss}`;
+  } catch {
+    try {
+      const d = new Date(ts);
+      if (Number.isNaN(d.getTime())) return "";
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = String(d.getFullYear());
+      const hh = String(d.getHours()).padStart(2, "0");
+      const min = String(d.getMinutes()).padStart(2, "0");
+      const ss = String(d.getSeconds()).padStart(2, "0");
+      return `Last updated ${dd}.${mm}.${yyyy} ${hh}:${min}:${ss}`;
+    } catch {
+      return "";
+    }
+  }
+}
+
 function render(treeData) {
   clear();
 
@@ -103,13 +132,6 @@ function render(treeData) {
       div.appendChild(line);
     }
 
-    if (n.data?.meta?.status) {
-      const line = document.createElement("div");
-      line.className = "line";
-      line.textContent = n.data.meta.status;
-      div.appendChild(line);
-    }
-
     const left = n.y + shiftX;
     const top = n.x + shiftY;
 
@@ -133,6 +155,17 @@ function render(treeData) {
     box.h = box.div.offsetHeight || 0;
   }
 
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  for (const b of nodeBoxes.values()) {
+    minX = Math.min(minX, b.cx);
+    maxX = Math.max(maxX, b.cx + b.w);
+    minY = Math.min(minY, b.cy - b.h / 2);
+    maxY = Math.max(maxY, b.cy + b.h / 2);
+  }
+
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   svg.appendChild(g);
 
@@ -143,9 +176,9 @@ function render(treeData) {
     const t = nodeBoxes.get(l.target);
     if (!s || !t) continue;
 
-    const x1 = s.cx + s.w / 2;
+    const x1 = s.cx + s.w;
     const y1 = s.cy;
-    const x2 = t.cx - t.w / 2;
+    const x2 = t.cx;
     const y2 = t.cy;
 
     const dx = x2 - x1;
@@ -165,14 +198,23 @@ function render(treeData) {
   const stageW = stageRect.width || 0;
   const stageH = stageRect.height || 0;
 
-  const tx = Math.max(20, (stageW - width) / 2);
-  const ty = Math.max(20, (stageH - height) / 2);
+  const bboxW = Number.isFinite(minX) ? maxX - minX : width;
+  const bboxH = Number.isFinite(minY) ? maxY - minY : height;
+  const pad = 20;
+  const tx = Math.max(
+    pad,
+    (stageW - bboxW) / 2 - (Number.isFinite(minX) ? minX : 0)
+  );
+  const ty = Math.max(
+    pad,
+    (stageH - bboxH) / 2 - (Number.isFinite(minY) ? minY : 0)
+  );
 
   const initial = d3.zoomIdentity.translate(tx, ty).scale(1);
-  setTransform(initial);
-
   if (state.zoom) {
     d3.select(stage).call(state.zoom.transform, initial);
+  } else {
+    setTransform(initial);
   }
 
   state.layout = { width, height };
@@ -183,10 +225,8 @@ async function main() {
   const data = await res.json();
 
   if (data.generated_at) {
-    meta.textContent = `updated ${data.generated_at}`;
+    meta.textContent = formatUpdated(data.generated_at);
   }
-
-  render(data.root);
 
   const zoom = d3
     .zoom()
@@ -195,7 +235,8 @@ async function main() {
 
   state.zoom = zoom;
   d3.select(stage).call(zoom);
-  d3.select(stage).call(zoom.transform, state.transform);
+
+  render(data.root);
 }
 
 main().catch((e) => {
