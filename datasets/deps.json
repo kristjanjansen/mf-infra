@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T10:47:08.082Z",
+  "generated_at": "2026-01-03T10:47:36.892Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
@@ -20,7 +20,7 @@
             "meta": {
               "environment": "pr",
               "deploy_url": "http://mf-billing-pr-3.localtest.me",
-              "last_timestamp": "2026-01-03T10:46:53Z",
+              "last_timestamp": "2026-01-03T10:23:02Z",
               "status": "success"
             },
             "children": [
@@ -30,7 +30,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:46:53Z",
+                  "last_timestamp": "2026-01-03T10:47:22Z",
                   "status": ""
                 }
               },
@@ -62,7 +62,7 @@
             "meta": {
               "environment": "pr",
               "deploy_url": "http://mf-dashboard-pr-3.localtest.me",
-              "last_timestamp": "2026-01-03T10:38:12Z",
+              "last_timestamp": "2026-01-03T10:47:22Z",
               "status": "success"
             },
             "children": [
@@ -72,7 +72,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:46:53Z",
+                  "last_timestamp": "2026-01-03T10:47:22Z",
                   "status": ""
                 }
               },
