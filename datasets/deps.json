@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T10:21:21.422Z",
+  "generated_at": "2026-01-03T10:21:49.823Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
@@ -30,7 +30,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:21:05Z",
+                  "last_timestamp": "2026-01-03T10:21:35Z",
                   "status": ""
                 }
               },
@@ -40,7 +40,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:21:05Z",
+                  "last_timestamp": "2026-01-03T10:21:35Z",
                   "status": ""
                 }
               }
@@ -62,7 +62,7 @@
             "meta": {
               "environment": "pr",
               "deploy_url": "http://mf-dashboard-pr-3.localtest.me",
-              "last_timestamp": "2026-01-03T10:14:54Z",
+              "last_timestamp": "2026-01-03T10:21:35Z",
               "status": "success"
             },
             "children": [
@@ -72,7 +72,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:21:05Z",
+                  "last_timestamp": "2026-01-03T10:21:35Z",
                   "status": ""
                 }
               },
@@ -82,7 +82,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:21:05Z",
+                  "last_timestamp": "2026-01-03T10:21:35Z",
                   "status": ""
                 }
               }
@@ -92,33 +92,11 @@
             "id": "mf-layout",
             "label": "mf-layout",
             "meta": {
-              "environment": "pr",
-              "deploy_url": "http://mf-layout-pr-3.localtest.me",
-              "last_timestamp": "2026-01-03T10:21:05Z",
-              "status": "success"
-            },
-            "children": [
-              {
-                "id": "mf-api",
-                "label": "mf-api",
-                "meta": {
-                  "environment": "rel",
-                  "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:21:05Z",
-                  "status": ""
-                }
-              },
-              {
-                "id": "mf-translations",
-                "label": "mf-translations",
-                "meta": {
-                  "environment": "rel",
-                  "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:21:05Z",
-                  "status": ""
-                }
-              }
-            ]
+              "environment": "rel",
+              "deploy_url": "http://mf-layout-rel-0-0-4.localtest.me",
+              "last_timestamp": "2026-01-03T10:20:08Z",
+              "status": ""
+            }
           },
           {
             "id": "mf-navigation",
