@@ -83,6 +83,12 @@ body {
   white-space: nowrap;
 }
 
+.node .ago {
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(231, 234, 243, 0.45);
+}
+
 .node a.line {
   color: rgba(231, 234, 243, 0.85);
   text-decoration: none;
