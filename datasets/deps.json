@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-01-03T09:38:18.508Z",
+  "generated_at": "2026-01-03T09:38:46.062Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
     "children": [
       {
-        "id": "mf-cookiebot",
-        "label": "mf-cookiebot",
+        "id": "mf-dashboard",
+        "label": "mf-dashboard",
         "meta": {
           "environment": "pr",
-          "deploy_url": "http://mf-cookiebot-pr-3.localtest.me",
-          "last_timestamp": "2026-01-03T09:38:00Z",
+          "deploy_url": "http://mf-dashboard-pr-3.localtest.me",
+          "last_timestamp": "2026-01-03T09:38:30Z",
           "status": "success"
         },
         "children": [
@@ -20,7 +20,7 @@
             "meta": {
               "environment": "rel",
               "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-              "last_timestamp": "2026-01-03T09:38:00Z"
+              "last_timestamp": "2026-01-03T09:38:30Z"
             }
           },
           {
@@ -29,7 +29,7 @@
             "meta": {
               "environment": "rel",
               "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-              "last_timestamp": "2026-01-03T09:38:00Z"
+              "last_timestamp": "2026-01-03T09:38:30Z"
             }
           }
         ]
