@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T09:39:15.436Z",
+  "generated_at": "2026-01-03T09:39:57.316Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
@@ -62,12 +62,12 @@
         ]
       },
       {
-        "id": "mf-layout",
-        "label": "mf-layout",
+        "id": "mf-navigation",
+        "label": "mf-navigation",
         "meta": {
           "environment": "pr",
-          "deploy_url": "http://mf-layout-pr-3.localtest.me",
-          "last_timestamp": "2026-01-03T09:38:59Z",
+          "deploy_url": "http://mf-navigation-pr-3.localtest.me",
+          "last_timestamp": "2026-01-03T09:39:29Z",
           "status": "success"
         },
         "children": [
@@ -77,7 +77,7 @@
             "meta": {
               "environment": "rel",
               "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-              "last_timestamp": "2026-01-03T09:38:59Z"
+              "last_timestamp": "2026-01-03T09:39:29Z"
             }
           },
           {
@@ -86,7 +86,7 @@
             "meta": {
               "environment": "rel",
               "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-              "last_timestamp": "2026-01-03T09:38:59Z"
+              "last_timestamp": "2026-01-03T09:39:29Z"
             }
           }
         ]
