@@ -84,7 +84,8 @@ function render(treeData) {
 
     if (n.data?.meta?.environment) {
       const b = document.createElement("span");
-      b.className = "badge";
+      const env = String(n.data.meta.environment || "").toLowerCase();
+      b.className = `badge badge-${env || "unknown"}`;
       b.textContent = n.data.meta.environment;
       name.appendChild(b);
     }
