@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-01-03T10:34:17Z",
+  "app_name": "mf-translations",
+  "environment": "pr",
+  "deploy_url": "http://mf-translations-pr-2.localtest.me",
+  "status": "success",
+  "services": []
+}
