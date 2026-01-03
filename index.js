@@ -7,6 +7,7 @@ const meta = document.getElementById("meta");
 const state = {
   transform: d3.zoomIdentity,
   layout: null,
+  zoom: null,
 };
 
 function setTransform(t) {
@@ -170,6 +171,10 @@ function render(treeData) {
   const initial = d3.zoomIdentity.translate(tx, ty).scale(1);
   setTransform(initial);
 
+  if (state.zoom) {
+    d3.select(stage).call(state.zoom.transform, initial);
+  }
+
   state.layout = { width, height };
 }
 
@@ -188,7 +193,9 @@ async function main() {
     .scaleExtent([0.25, 2.5])
     .on("zoom", (event) => setTransform(event.transform));
 
+  state.zoom = zoom;
   d3.select(stage).call(zoom);
+  d3.select(stage).call(zoom.transform, state.transform);
 }
 
 main().catch((e) => {

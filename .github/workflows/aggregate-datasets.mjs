@@ -53,6 +53,7 @@ fs.writeFileSync(
 
 const apps = new Map();
 const latestServiceByName = new Map();
+const referencedByOtherApps = new Set();
 
 for (const e of events) {
   if (!e || typeof e !== "object") continue;
@@ -61,7 +62,7 @@ for (const e of events) {
   const appName = String(e.app_name);
   const ts = String(e.timestamp || "");
 
-  // Track the latest deploy per app
+  // Track latest deploy per app
   if (!apps.has(appName)) {
     apps.set(appName, {
       id: appName,
@@ -90,6 +91,9 @@ for (const e of events) {
       if (!s.app_name) continue;
       const name = String(s.app_name);
       const sTs = String(s.timestamp || e.timestamp || "");
+
+      referencedByOtherApps.add(name);
+
       const prev = latestServiceByName.get(name);
       if (!prev || sTs >= String(prev.last_timestamp || "")) {
         latestServiceByName.set(name, {
@@ -104,47 +108,81 @@ for (const e of events) {
   }
 }
 
-const children = [...apps.values()]
-  .sort((a, b) => a.label.localeCompare(b.label))
-  .map((a) => {
-    const serviceNames = new Set();
-    for (const s of a.services || []) {
-      if (s && typeof s === "object" && s.app_name) {
-        serviceNames.add(String(s.app_name));
-      }
+function uniqSorted(arr) {
+  return [...new Set(arr)].sort((a, b) => a.localeCompare(b));
+}
+
+function serviceNamesFromApp(app) {
+  const names = [];
+  for (const s of app.services || []) {
+    if (s && typeof s === "object" && s.app_name) {
+      names.push(String(s.app_name));
     }
+  }
+  return uniqSorted(names);
+}
 
-    const appChildren = [...serviceNames]
-      .sort((x, y) => x.localeCompare(y))
-      .map((name) => {
-        const meta = latestServiceByName.get(name) || {
-          environment: "",
-          deploy_url: "",
-          last_timestamp: "",
-        };
-        return {
-          id: name,
-          label: name,
-          meta: {
-            environment: meta.environment,
-            deploy_url: meta.deploy_url,
-            last_timestamp: meta.last_timestamp,
-          },
-        };
-      });
-
+function metaForName(name) {
+  const app = apps.get(name);
+  if (app) {
     return {
-      id: a.id,
-      label: a.label,
-      meta: {
-        environment: a.environment,
-        deploy_url: a.deploy_url,
-        last_timestamp: a.last_timestamp,
-        status: a.status,
-      },
-      children: appChildren,
+      environment: app.environment,
+      deploy_url: app.deploy_url,
+      last_timestamp: app.last_timestamp,
+      status: app.status,
     };
+  }
+  const svc = latestServiceByName.get(name);
+  return {
+    environment: svc?.environment || "",
+    deploy_url: svc?.deploy_url || "",
+    last_timestamp: svc?.last_timestamp || "",
+  };
+}
+
+function buildNode(name, visiting) {
+  const meta = metaForName(name);
+  const node = {
+    id: name,
+    label: name,
+    meta,
+  };
+
+  if (visiting.has(name)) return node;
+
+  const app = apps.get(name);
+  if (!app) return node;
+
+  visiting.add(name);
+  const deps = serviceNamesFromApp(app);
+  if (deps.length) {
+    node.children = deps.map((dep) => buildNode(dep, visiting));
+  }
+  visiting.delete(name);
+
+  return node;
+}
+
+// Ensure any referenced service name appears as a node even if it has no standalone deploy event.
+for (const name of latestServiceByName.keys()) {
+  if (apps.has(name)) continue;
+  const meta = latestServiceByName.get(name);
+  apps.set(name, {
+    id: name,
+    label: name,
+    environment: meta?.environment || "",
+    deploy_url: meta?.deploy_url || "",
+    last_timestamp: meta?.last_timestamp || "",
+    status: "",
+    services: [],
   });
+}
+
+const rootAppNames = uniqSorted(
+  [...apps.keys()].filter((name) => !referencedByOtherApps.has(name))
+);
+
+const children = rootAppNames.map((name) => buildNode(name, new Set()));
 
 const depsJson = {
   generated_at: generatedAt,
