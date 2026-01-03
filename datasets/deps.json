@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T10:23:20.948Z",
+  "generated_at": "2026-01-03T10:34:33.849Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
@@ -38,10 +38,10 @@
                 "id": "mf-translations",
                 "label": "mf-translations",
                 "meta": {
-                  "environment": "rel",
-                  "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:23:02Z",
-                  "status": ""
+                  "environment": "pr",
+                  "deploy_url": "http://mf-translations-pr-2.localtest.me",
+                  "last_timestamp": "2026-01-03T10:34:17Z",
+                  "status": "success"
                 }
               }
             ]
@@ -80,10 +80,10 @@
                 "id": "mf-translations",
                 "label": "mf-translations",
                 "meta": {
-                  "environment": "rel",
-                  "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:23:02Z",
-                  "status": ""
+                  "environment": "pr",
+                  "deploy_url": "http://mf-translations-pr-2.localtest.me",
+                  "last_timestamp": "2026-01-03T10:34:17Z",
+                  "status": "success"
                 }
               }
             ]

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T10:23:20.948Z",
+  "generated_at": "2026-01-03T10:34:33.849Z",
   "events": [
     {
       "timestamp": "2026-01-03T09:24:06Z",
@@ -279,6 +279,14 @@
           "deploy_url": "http://mf-api-rel-0-0-1.localtest.me"
         }
       ]
+    },
+    {
+      "timestamp": "2026-01-03T10:34:17Z",
+      "app_name": "mf-translations",
+      "environment": "pr",
+      "deploy_url": "http://mf-translations-pr-2.localtest.me",
+      "status": "success",
+      "services": []
     }
   ]
 }
