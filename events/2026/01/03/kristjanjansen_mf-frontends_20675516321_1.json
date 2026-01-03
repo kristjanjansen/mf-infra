@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-01-03T09:38:00Z",
-  "app_name": "mf-cookiebot",
+  "timestamp": "2026-01-03T09:38:30Z",
+  "app_name": "mf-dashboard",
   "environment": "pr",
-  "deploy_url": "http://mf-cookiebot-pr-3.localtest.me",
+  "deploy_url": "http://mf-dashboard-pr-3.localtest.me",
   "status": "success",
   "services": [
     {
-      "timestamp": "2026-01-03T09:38:00Z",
+      "timestamp": "2026-01-03T09:38:30Z",
       "app_name": "mf-translations",
       "environment": "rel",
       "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me"
     },
     {
-      "timestamp": "2026-01-03T09:38:00Z",
+      "timestamp": "2026-01-03T09:38:30Z",
       "app_name": "mf-api",
       "environment": "rel",
       "deploy_url": "http://mf-api-rel-0-0-1.localtest.me"
