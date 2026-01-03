@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T10:13:18.799Z",
+  "generated_at": "2026-01-03T10:13:45.436Z",
   "events": [
     {
       "timestamp": "2026-01-03T09:24:06Z",
@@ -162,27 +162,6 @@
     },
     {
       "timestamp": "2026-01-03T10:12:58Z",
-      "app_name": "mf-billing",
-      "environment": "pr",
-      "deploy_url": "http://mf-billing-pr-3.localtest.me",
-      "status": "success",
-      "services": [
-        {
-          "timestamp": "2026-01-03T10:12:58Z",
-          "app_name": "mf-translations",
-          "environment": "rel",
-          "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me"
-        },
-        {
-          "timestamp": "2026-01-03T10:12:58Z",
-          "app_name": "mf-api",
-          "environment": "rel",
-          "deploy_url": "http://mf-api-rel-0-0-1.localtest.me"
-        }
-      ]
-    },
-    {
-      "timestamp": "2026-01-03T10:12:58Z",
       "app_name": "mf-host-web",
       "environment": "pr",
       "deploy_url": "http://mf-host-web-pr-11.localtest.me",
@@ -217,6 +196,27 @@
           "app_name": "mf-cookiebot",
           "environment": "rel",
           "deploy_url": "http://mf-cookiebot-rel-0-0-4.localtest.me"
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-01-03T10:13:27Z",
+      "app_name": "mf-cookiebot",
+      "environment": "pr",
+      "deploy_url": "http://mf-cookiebot-pr-3.localtest.me",
+      "status": "success",
+      "services": [
+        {
+          "timestamp": "2026-01-03T10:13:27Z",
+          "app_name": "mf-translations",
+          "environment": "rel",
+          "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me"
+        },
+        {
+          "timestamp": "2026-01-03T10:13:27Z",
+          "app_name": "mf-api",
+          "environment": "rel",
+          "deploy_url": "http://mf-api-rel-0-0-1.localtest.me"
         }
       ]
     }
