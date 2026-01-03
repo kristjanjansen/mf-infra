@@ -2,35 +2,19 @@
 
 Microfrontends infrastructure.
 
-## Links
+## Demo
 
-## mf-host-web
+https://kristjanjansen.github.io/mf-infra/
+
+## Links to repos
 
 https://github.com/kristjanjansen/mf-host-web
-
-http://mf-host-web-rel-0-0-4.localtest.me
-
-## mf-frontends
+https://github.com/kristjanjansen/mf-host-expo
 
 https://github.com/kristjanjansen/mf-frontends
 
-- http://mf-layout-rel-0-0-4.localtest.me
-- http://mf-navigation-rel-0-0-4.localtest.me
-- http://mf-billing-rel-0-0-4.localtest.me
-- http://mf-dashboard-rel-0-0-4.localtest.me
-- http://mf-cookiebot-rel-0-0-4.localtest.me
-
-## mf-api
-
 https://github.com/kristjanjansen/mf-api
-
-http://mf-api-rel-0-0-1.localtest.me
-
-## mf-translations
-
 https://github.com/kristjanjansen/mf-translations
-
-http://mf-translations-rel-0-0-1.localtest.me
 
 ## Overview
 
