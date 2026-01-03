@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-01-03T10:40:56Z",
+  "app_name": "mf-host-web",
+  "environment": "pr",
+  "deploy_url": "http://mf-host-web-pr-11.localtest.me",
+  "status": "success",
+  "services": [
+    {
+      "timestamp": "2026-01-03T10:40:56Z",
+      "app_name": "mf-layout",
+      "environment": "rel",
+      "deploy_url": "http://mf-layout-rel-0-0-4.localtest.me"
+    },
+    {
+      "timestamp": "2026-01-03T10:40:56Z",
+      "app_name": "mf-navigation",
+      "environment": "rel",
+      "deploy_url": "http://mf-navigation-rel-0-0-4.localtest.me"
+    },
+    {
+      "timestamp": "2026-01-03T10:40:56Z",
+      "app_name": "mf-billing",
+      "environment": "pr",
+      "deploy_url": "http://mf-billing-pr-3.localtest.me"
+    },
+    {
+      "timestamp": "2026-01-03T10:40:56Z",
+      "app_name": "mf-dashboard",
+      "environment": "pr",
+      "deploy_url": "http://mf-dashboard-pr-3.localtest.me"
+    },
+    {
+      "timestamp": "2026-01-03T10:40:56Z",
+      "app_name": "mf-cookiebot",
+      "environment": "pr",
+      "deploy_url": "http://mf-cookiebot-pr-3.localtest.me"
+    }
+  ]
+}
