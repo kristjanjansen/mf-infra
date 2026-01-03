@@ -11,6 +11,8 @@ concurrency:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -35,6 +37,23 @@ jobs:
       - name: Build datasets
         shell: bash
         run: node .github/workflows/aggregate-datasets.mjs
+
+      - name: Prepare Pages artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf site
+          mkdir -p site/datasets
+          cp index.html site/index.html
+          cp index.js site/index.js
+          cp index.css site/index.css
+          cp datasets/events.json site/datasets/events.json
+          cp datasets/deps.json site/datasets/deps.json
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
 
       - name: Commit datasets
         shell: bash
@@ -61,3 +80,14 @@ jobs:
 
           echo "Failed to push datasets after retries" >&2
           exit 1
+
+  deploy_pages:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
