@@ -26,7 +26,7 @@ jobs:
 
       - name: Debounce
         shell: bash
-        run: sleep 90
+        run: sleep 5
 
       - uses: actions/setup-node@v4
         with:

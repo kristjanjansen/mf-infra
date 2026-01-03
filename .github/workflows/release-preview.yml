@@ -131,7 +131,6 @@ jobs:
           environment: rel
           deploy_url: ${{ env.URL }}
           status: ${{ job.status }}
-          infra_ref: main
 
       - name: Write summary
         shell: bash

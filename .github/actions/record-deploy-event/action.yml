@@ -13,9 +13,6 @@ inputs:
   status:
     required: false
     default: "success"
-  infra_ref:
-    required: false
-    default: ""
 
 runs:
   using: "composite"
@@ -60,4 +57,3 @@ runs:
         INPUT_ENVIRONMENT: ${{ inputs.environment }}
         INPUT_DEPLOY_URL: ${{ inputs.deploy_url }}
         INPUT_STATUS: ${{ inputs.status }}
-        INPUT_INFRA_REF: ${{ inputs.infra_ref }}

@@ -7,7 +7,6 @@ APP_NAME="${INPUT_APP_NAME:?missing app_name}"
 ENVIRONMENT="${INPUT_ENVIRONMENT:?missing environment}"
 DEPLOY_URL="${INPUT_DEPLOY_URL:?missing deploy_url}"
 STATUS="${INPUT_STATUS:-success}"
-INFRA_REF="${INPUT_INFRA_REF:-}"
 
 TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 Y="$(date -u +%Y)"
@@ -41,7 +40,7 @@ export DEPLOY_URL
 export STATUS
 export SHA
 export REF
-export INFRA_REF
+export SERVICES_FILE="${GITHUB_WORKSPACE}/.env.services"
 
 node "${GITHUB_ACTION_PATH}/record.mjs" "${EVENT_FILE}"
 
