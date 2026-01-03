@@ -1,8 +1,66 @@
 {
-  "generated_at": "2026-01-03T09:23:27.231Z",
+  "generated_at": "2026-01-03T09:24:23.307Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
-    "children": []
+    "children": [
+      {
+        "id": "mf-host-web",
+        "label": "mf-host-web",
+        "meta": {
+          "environment": "pr",
+          "deploy_url": "http://mf-host-web-pr-11.localtest.me",
+          "last_timestamp": "2026-01-03T09:24:06Z",
+          "status": "success"
+        },
+        "children": [
+          {
+            "id": "mf-billing",
+            "label": "mf-billing",
+            "meta": {
+              "environment": "pr",
+              "deploy_url": "http://mf-billing-rel-0-0-4.localtest.me",
+              "last_timestamp": "2026-01-03T09:24:06Z"
+            }
+          },
+          {
+            "id": "mf-cookiebot",
+            "label": "mf-cookiebot",
+            "meta": {
+              "environment": "pr",
+              "deploy_url": "http://mf-cookiebot-rel-0-0-4.localtest.me",
+              "last_timestamp": "2026-01-03T09:24:06Z"
+            }
+          },
+          {
+            "id": "mf-dashboard",
+            "label": "mf-dashboard",
+            "meta": {
+              "environment": "pr",
+              "deploy_url": "http://mf-dashboard-rel-0-0-4.localtest.me",
+              "last_timestamp": "2026-01-03T09:24:06Z"
+            }
+          },
+          {
+            "id": "mf-layout",
+            "label": "mf-layout",
+            "meta": {
+              "environment": "pr",
+              "deploy_url": "http://mf-layout-rel-0-0-4.localtest.me",
+              "last_timestamp": "2026-01-03T09:24:06Z"
+            }
+          },
+          {
+            "id": "mf-navigation",
+            "label": "mf-navigation",
+            "meta": {
+              "environment": "pr",
+              "deploy_url": "http://mf-navigation-rel-0-0-4.localtest.me",
+              "last_timestamp": "2026-01-03T09:24:06Z"
+            }
+          }
+        ]
+      }
+    ]
   }
 }
