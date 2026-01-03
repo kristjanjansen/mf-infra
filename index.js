@@ -163,7 +163,7 @@ function render(treeData) {
   const stageW = stageRect.width || 0;
   const stageH = stageRect.height || 0;
 
-  const tx = 20;
+  const tx = Math.max(20, (stageW - width) / 2);
   const ty = Math.max(20, (stageH - height) / 2);
 
   const initial = d3.zoomIdentity.translate(tx, ty).scale(1);
