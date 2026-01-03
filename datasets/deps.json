@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-03T10:34:33.849Z",
+  "generated_at": "2026-01-03T10:36:27.081Z",
   "root": {
     "id": "mf-infra",
     "label": "mf-infra",
@@ -30,7 +30,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:23:02Z",
+                  "last_timestamp": "2026-01-03T10:36:13Z",
                   "status": ""
                 }
               },
@@ -72,7 +72,7 @@
                 "meta": {
                   "environment": "rel",
                   "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
-                  "last_timestamp": "2026-01-03T10:23:02Z",
+                  "last_timestamp": "2026-01-03T10:36:13Z",
                   "status": ""
                 }
               },
@@ -102,11 +102,33 @@
             "id": "mf-navigation",
             "label": "mf-navigation",
             "meta": {
-              "environment": "rel",
-              "deploy_url": "http://mf-navigation-rel-0-0-4.localtest.me",
-              "last_timestamp": "2026-01-03T10:20:08Z",
-              "status": ""
-            }
+              "environment": "pr",
+              "deploy_url": "http://mf-navigation-pr-3.localtest.me",
+              "last_timestamp": "2026-01-03T10:36:13Z",
+              "status": "success"
+            },
+            "children": [
+              {
+                "id": "mf-api",
+                "label": "mf-api",
+                "meta": {
+                  "environment": "rel",
+                  "deploy_url": "http://mf-api-rel-0-0-1.localtest.me",
+                  "last_timestamp": "2026-01-03T10:36:13Z",
+                  "status": ""
+                }
+              },
+              {
+                "id": "mf-translations",
+                "label": "mf-translations",
+                "meta": {
+                  "environment": "pr",
+                  "deploy_url": "http://mf-translations-pr-2.localtest.me",
+                  "last_timestamp": "2026-01-03T10:34:17Z",
+                  "status": "success"
+                }
+              }
+            ]
           }
         ]
       }
