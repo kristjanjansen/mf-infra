@@ -1,13 +1,4 @@
 {
-  "generated_at": "2026-01-03T08:58:28.552Z",
-  "events": [
-    {
-      "timestamp": "2026-01-03T08:56:46Z",
-      "app_name": "mf-host-web",
-      "environment": "pr",
-      "deploy_url": "http://mf-host-web-pr-11.localtest.me",
-      "status": "success",
-      "infra_ref": "main"
-    }
-  ]
+  "generated_at": "2026-01-03T09:23:27.231Z",
+  "events": []
 }
