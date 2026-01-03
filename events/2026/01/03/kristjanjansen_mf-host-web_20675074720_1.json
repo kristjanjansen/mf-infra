@@ -1,8 +1,0 @@
-{
-  "timestamp": "2026-01-03T08:56:46Z",
-  "app_name": "mf-host-web",
-  "environment": "pr",
-  "deploy_url": "http://mf-host-web-pr-11.localtest.me",
-  "status": "success",
-  "infra_ref": "main"
-}
