@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-01-03T10:21:05Z",
-  "app_name": "mf-layout",
+  "timestamp": "2026-01-03T10:21:35Z",
+  "app_name": "mf-dashboard",
   "environment": "pr",
-  "deploy_url": "http://mf-layout-pr-3.localtest.me",
+  "deploy_url": "http://mf-dashboard-pr-3.localtest.me",
   "status": "success",
   "services": [
     {
-      "timestamp": "2026-01-03T10:21:05Z",
+      "timestamp": "2026-01-03T10:21:35Z",
       "app_name": "mf-translations",
       "environment": "rel",
       "deploy_url": "http://mf-translations-rel-0-0-1.localtest.me"
     },
     {
-      "timestamp": "2026-01-03T10:21:05Z",
+      "timestamp": "2026-01-03T10:21:35Z",
       "app_name": "mf-api",
       "environment": "rel",
       "deploy_url": "http://mf-api-rel-0-0-1.localtest.me"
