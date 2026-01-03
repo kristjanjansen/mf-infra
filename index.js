@@ -37,16 +37,27 @@ function render(treeData) {
   const nodes = root.descendants();
   const links = root.links();
 
-  const x0 = d3.min(nodes, (d) => d.x) ?? 0;
-  const x1 = d3.max(nodes, (d) => d.x) ?? 0;
-  const y0 = d3.min(nodes, (d) => d.y) ?? 0;
-  const y1 = d3.max(nodes, (d) => d.y) ?? 0;
+  const isHiddenRoot = (n) =>
+    n.depth === 0 &&
+    (n.data?.id === "mf-infra" || n.data?.label === "mf-infra");
+
+  const visibleNodes = nodes.filter((n) => !isHiddenRoot(n));
+
+  const x0 = d3.min(visibleNodes, (d) => d.x) ?? 0;
+  const x1 = d3.max(visibleNodes, (d) => d.x) ?? 0;
+  const y0 = d3.min(visibleNodes, (d) => d.y) ?? 0;
+  const y1 = d3.max(visibleNodes, (d) => d.y) ?? 0;
 
   const margin = 80;
   const width = y1 - y0 + margin * 2;
   const height = x1 - x0 + margin * 2;
 
   resizeSvg(width, height);
+
+  viewport.style.width = `${width}px`;
+  viewport.style.height = `${height}px`;
+  nodesLayer.style.width = `${width}px`;
+  nodesLayer.style.height = `${height}px`;
 
   const shiftX = margin - y0;
   const shiftY = margin - x0;
@@ -56,21 +67,13 @@ function render(treeData) {
     .x((d) => d.y)
     .y((d) => d.x);
 
-  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  svg.appendChild(g);
-
-  for (const l of links) {
-    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    p.setAttribute("class", "link");
-    const d = linkPath({
-      source: { x: l.source.x + shiftY, y: l.source.y + shiftX },
-      target: { x: l.target.x + shiftY, y: l.target.y + shiftX },
-    });
-    p.setAttribute("d", d);
-    g.appendChild(p);
-  }
+  const nodeBoxes = new Map();
 
   for (const n of nodes) {
+    if (isHiddenRoot(n)) {
+      continue;
+    }
+
     const div = document.createElement("div");
     div.className = "node";
 
@@ -89,9 +92,12 @@ function render(treeData) {
     div.appendChild(name);
 
     if (n.data?.meta?.deploy_url) {
-      const line = document.createElement("div");
+      const line = document.createElement("a");
       line.className = "line";
       line.textContent = n.data.meta.deploy_url;
+      line.href = n.data.meta.deploy_url;
+      line.target = "_blank";
+      line.rel = "noreferrer";
       div.appendChild(line);
     }
 
@@ -109,9 +115,58 @@ function render(treeData) {
     div.style.top = `${top}px`;
 
     nodesLayer.appendChild(div);
+
+    nodeBoxes.set(n, {
+      div,
+      cx: left,
+      cy: top,
+      w: 0,
+      h: 0,
+    });
   }
 
-  const initial = d3.zoomIdentity.translate(20, 20).scale(1);
+  // Measure after insertion so links attach to box edges.
+  for (const box of nodeBoxes.values()) {
+    box.w = box.div.offsetWidth || 0;
+    box.h = box.div.offsetHeight || 0;
+  }
+
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  svg.appendChild(g);
+
+  for (const l of links) {
+    if (l.source.depth === 0) continue;
+
+    const s = nodeBoxes.get(l.source);
+    const t = nodeBoxes.get(l.target);
+    if (!s || !t) continue;
+
+    const x1 = s.cx + s.w / 2;
+    const y1 = s.cy;
+    const x2 = t.cx - t.w / 2;
+    const y2 = t.cy;
+
+    const dx = x2 - x1;
+    const c1x = x1 + dx * 0.5;
+    const c2x = x2 - dx * 0.5;
+
+    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    p.setAttribute("class", "link");
+    p.setAttribute(
+      "d",
+      `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`
+    );
+    g.appendChild(p);
+  }
+
+  const stageRect = stage.getBoundingClientRect();
+  const stageW = stageRect.width || 0;
+  const stageH = stageRect.height || 0;
+
+  const tx = 20;
+  const ty = Math.max(20, (stageH - height) / 2);
+
+  const initial = d3.zoomIdentity.translate(tx, ty).scale(1);
   setTransform(initial);
 
   state.layout = { width, height };

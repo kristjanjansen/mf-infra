@@ -47,6 +47,13 @@ function baseServiceNameFromHostLabel(label) {
     .replace(/-+$/g, "");
 }
 
+function envFromHostLabel(label) {
+  const s = String(label);
+  if (/(^|-)pr-\d+$/i.test(s)) return "pr";
+  if (/(^|-)rel-[a-z0-9-]+$/i.test(s)) return "rel";
+  return "";
+}
+
 function inferServiceName(key, deployUrl) {
   try {
     const u = new URL(deployUrl);
@@ -82,6 +89,18 @@ function normalizeDeployUrl(v) {
   return "";
 }
 
+function inferEnvFromDeployUrl(deployUrl) {
+  try {
+    const u = new URL(deployUrl);
+    const host = u.hostname;
+    if (!host) return "";
+    const label = host.split(".")[0];
+    return envFromHostLabel(label);
+  } catch {
+    return "";
+  }
+}
+
 function parseEnvServicesFile(filePath) {
   if (!filePath) return [];
   if (!fs.existsSync(filePath)) return [];
@@ -104,10 +123,12 @@ function parseEnvServicesFile(filePath) {
     const deployUrl = normalizeDeployUrl(val);
     if (!deployUrl) continue;
 
+    const inferredEnv = inferEnvFromDeployUrl(deployUrl);
+
     out.push({
       timestamp: TS || "",
       app_name: inferServiceName(key, deployUrl),
-      environment: ENVIRONMENT,
+      environment: inferredEnv || ENVIRONMENT,
       deploy_url: deployUrl,
     });
   }
