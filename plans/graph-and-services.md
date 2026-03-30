@@ -29,9 +29,110 @@ This means:
 - The graph builder sees them as separate per-parent dependencies
 - No single place to see the full dependency picture
 
+### 3. Data Structure Issues
+
+Current `events.json` event shape:
+```json
+{
+  "timestamp": "2026-01-03T10:40:56Z",
+  "app_name": "mf-host-web",
+  "environment": "pr",
+  "deploy_url": "http://mf-host-web-pr-11.localtest.me",
+  "status": "success",
+  "services": [
+    {
+      "timestamp": "2026-01-03T10:40:56Z",
+      "app_name": "mf-layout",
+      "environment": "rel",
+      "deploy_url": "http://mf-layout-rel-0-0-4.localtest.me"
+    }
+  ]
+}
+```
+
+Problems:
+- **`app_name`** — ambiguous (repo? MFE? instance?). Should be `service`.
+- **`environment`** — value is `"pr"` or `"rel"`, which is the deployment type, not an environment. Sometimes wrong (event says `"pr"` but URL contains `rel-0-0-4`). Derivable from `version` prefix — drop it.
+- **`deploy_url`** — verbose. Just `url`.
+- **No `version` field** — version is buried in the URL string (`pr-3`, `rel-0-0-1`), has to be reverse-parsed. Should be first-class.
+- **Redundant `timestamp` on services** — every service entry repeats the parent's timestamp. Not when the service was deployed — when the parent was deployed. Useless.
+- **`url` on services** — computable from `service` + `version` + domain. Storing it couples events to a specific provider's URLs.
+
+Current `deps.json` node shape:
+```json
+{
+  "id": "mf-billing",
+  "label": "mf-billing",
+  "meta": {
+    "environment": "pr",
+    "deploy_url": "...",
+    "last_timestamp": "...",
+    "status": "success"
+  }
+}
+```
+
+Problems:
+- **`id` and `label`** always identical — one field is enough, use `service`.
+- **`meta` wrapper** — unnecessary nesting, flatten to top-level fields.
+- **`last_timestamp`** — unclear what "last" means. Use `last_deployed`.
+- **Hidden root node** (`mf-infra`) — not a real service, just a layout hack for d3.tree.
+
 ## Changes
 
-### 1. Switch from Tree to DAG (Directed Acyclic Graph)
+### 1. Clean Up Data Structures
+
+**events.json — new event shape:**
+```json
+{
+  "timestamp": "2026-01-03T10:40:56Z",
+  "service": "mfe-host-web",
+  "version": "pr-11",
+  "url": "https://mfe-host-web-pr-11.mfe.fachwerk.dev",
+  "status": "success",
+  "services": [
+    { "service": "mfe-layout",     "version": "rel-0.0.4" },
+    { "service": "mfe-navigation", "version": "rel-0.0.4" },
+    { "service": "mfe-billing",    "version": "pr-3" },
+    { "service": "mfe-dashboard",  "version": "pr-3" },
+    { "service": "mfe-cookiebot",  "version": "pr-3", "declared": "latest-rel" }
+  ]
+}
+```
+
+- `app_name` → `service`
+- `environment` dropped — derivable from `version` prefix (`pr-*` or `rel-*`)
+- `deploy_url` → `url`
+- `version` added as first-class field — always the resolved concrete version (e.g., `rel-0.0.2`, never `latest-rel`)
+- Version format: dotted semver for releases (`rel-0.0.2`), number for PRs (`pr-3`). URL slugs convert dots to dashes (`rel-0-0-2`) for DNS-safe hostnames — the deploy script handles this.
+- `declared` on services — optional, only present when the `.env.services` entry differs from the resolved version (i.e., was `latest-rel` or `latest-pr`). Answers "is this pinned or floating?"
+- Services are `{ service, version, declared? }` only — no timestamp, no url (computable from service + version + domain)
+
+**deps.json — new node shape:**
+```json
+{
+  "service": "mfe-host-web",
+  "version": "pr-11",
+  "url": "https://mfe-host-web-pr-11.mfe.fachwerk.dev",
+  "status": "success",
+  "last_deployed": "2026-01-03T10:40:56Z"
+}
+```
+
+- `id`/`label` → `service`
+- `meta` wrapper removed — fields are top-level
+- `last_timestamp` → `last_deployed`
+- Hidden root node removed (not needed with DAG layout)
+
+**deps.json — new edge shape:**
+```json
+{ "from": "mfe-host-web", "to": "mfe-billing" }
+{ "from": "mfe-host-web", "to": "mfe-cookiebot", "declared": "latest-rel" }
+```
+
+`declared` on edges is optional — only present when the dependency was declared as `latest-rel` or `latest-pr`. The graph can render these edges differently (e.g., dashed line) to indicate floating vs pinned dependencies.
+
+### 2. Switch from Tree to DAG (Directed Acyclic Graph)
 
 The visualization should be a **DAG** — each service is one node, with multiple edges allowed.
 
@@ -41,19 +142,19 @@ The visualization should be a **DAG** — each service is one node, with multipl
 {
   "generated_at": "...",
   "nodes": [
-    { "id": "mfe-host-web", "environment": "pr", "deploy_url": "..." },
-    { "id": "mfe-billing", "environment": "pr", "deploy_url": "..." },
-    { "id": "mfe-dashboard", "environment": "pr", "deploy_url": "..." },
-    { "id": "mfe-api", "environment": "rel", "deploy_url": "..." },
-    { "id": "mfe-translations", "environment": "pr", "deploy_url": "..." }
+    { "service": "mfe-host-web",    "version": "pr-11",    "url": "...", "status": "success", "last_deployed": "..." },
+    { "service": "mfe-billing",     "version": "pr-3",     "url": "...", "status": "success", "last_deployed": "..." },
+    { "service": "mfe-dashboard",   "version": "pr-3",     "url": "...", "status": "success", "last_deployed": "..." },
+    { "service": "mfe-api",         "version": "rel-0.0.1","url": "...", "status": "success", "last_deployed": "..." },
+    { "service": "mfe-translations","version": "pr-2",     "url": "...", "status": "success", "last_deployed": "..." }
   ],
   "edges": [
-    { "source": "mfe-host-web", "target": "mfe-billing" },
-    { "source": "mfe-host-web", "target": "mfe-dashboard" },
-    { "source": "mfe-billing", "target": "mfe-api" },
-    { "source": "mfe-billing", "target": "mfe-translations" },
-    { "source": "mfe-dashboard", "target": "mfe-api" },
-    { "source": "mfe-dashboard", "target": "mfe-translations" }
+    { "from": "mfe-host-web", "to": "mfe-billing" },
+    { "from": "mfe-host-web", "to": "mfe-dashboard" },
+    { "from": "mfe-billing",  "to": "mfe-api" },
+    { "from": "mfe-billing",  "to": "mfe-translations" },
+    { "from": "mfe-dashboard", "to": "mfe-api" },
+    { "from": "mfe-dashboard", "to": "mfe-translations" }
   ]
 }
 ```
@@ -186,14 +287,14 @@ With resolved versions, every node in the graph shows the concrete version:
 └─────────────────────┘
 ```
 
-The node data model adds a `version` field:
+The node data model has `version` as a first-class field:
 
 ```json
 {
-  "id": "mfe-api",
+  "service": "mfe-api",
   "version": "rel-0.0.2",
-  "environment": "rel",
-  "deploy_url": "https://mfe-api-rel-0-0-2.mfe.fachwerk.dev"
+  "url": "https://mfe-api-rel-0-0-2.mfe.fachwerk.dev",
+  "last_deployed": "2026-01-03T10:38:12Z"
 }
 ```
 
@@ -241,55 +342,26 @@ for each dependency in .env.services:
 
 Fail the deploy early if a dependency is down or doesn't exist yet.
 
-### 4. DAG Snapshots (Browsable History)
+### 4. Historical Graph View
 
-Every deploy creates a new state of the world. Store a snapshot of the full DAG on each deploy so you can browse the state at any point in time.
+The dashboard can show the graph state at any past point by filtering `state/deploys.json` up to a selected timestamp and rebuilding the graph client-side. No separate snapshot files needed — the deploy history already contains all the data.
 
-**Storage:** `datasets/snapshots/{timestamp}.json` — each file is a complete `deps.json` (nodes + edges with resolved versions) at that moment.
-
-```
-datasets/
-  deps.json                          ← current state (latest snapshot)
-  snapshots/
-    2026-01-03T10-23-02Z.json        ← state after mfe-billing pr-3 deployed
-    2026-01-03T10-34-17Z.json        ← state after mfe-translations pr-2 deployed
-    2026-01-03T10-38-12Z.json        ← state after mfe-dashboard pr-3 deployed
-    2026-01-03T10-40-56Z.json        ← state after mfe-host-web pr-11 deployed
-```
-
-Each snapshot includes which deploy triggered it:
-
-```json
-{
-  "generated_at": "2026-01-03T10:40:56Z",
-  "triggered_by": { "service": "mfe-host-web", "version": "pr-11" },
-  "nodes": [...],
-  "edges": [...]
-}
-```
-
-**Dashboard UI:** Add a timeline slider or dropdown to browse snapshots. The current view defaults to `deps.json` (latest). Selecting a past snapshot loads that file and re-renders the graph. This answers "what was the state when X broke?" without digging through git history.
-
-**Aggregation:** `aggregate-datasets.mjs` generates snapshots by replaying events in order — after processing each event, emit a snapshot of the DAG state at that point. Also write the final state as `deps.json`.
-
-**Cleanup:** Snapshots are small JSON files. Keep all of them — disk is cheap and the count grows linearly with deploys (not with time). If it ever becomes a problem, prune snapshots older than N days.
+**Dashboard UI:** Add a timeline slider. Selecting a past timestamp replays deploys up to that point and re-renders the graph. Default view is current state (all deploys).
 
 ### 5. Aggregation Deduplication Logic
 
 In `aggregate-datasets.mjs`, when building edges:
 
 ```javascript
-const nodes = new Map();   // id -> { id, version, environment, deploy_url, ... }
-const edges = new Set();   // "source->target" strings
+const nodes = new Map();   // service -> { service, version, url, status, last_deployed }
+const edges = new Set();   // "from->to" strings
 
 for (const event of events) {
-  // Upsert node for the deploying app
-  upsertNode(nodes, event.app_name, event);
+  upsertNode(nodes, event.service, event);
 
-  // Upsert nodes + edges for its services
   for (const svc of event.services) {
-    upsertNode(nodes, svc.app_name, svc);
-    edges.add(`${event.app_name}->${svc.app_name}`);
+    upsertNode(nodes, svc.service, svc);
+    edges.add(`${event.service}->${svc.service}`);
   }
 }
 ```
@@ -298,14 +370,16 @@ Same service referenced by multiple parents = one node, multiple edges. Done.
 
 ## Migration Steps
 
-1. Change `.env.services` format to `KEY=version` with UPPERCASE convention
-2. Update `deploy.sh` to resolve `KEY=version` → URLs using provider config
+1. Rename directories: `events/` → `deploys/`, `datasets/` → `state/` (`state/deploys.json`, `state/graph.json`)
+2. Update `record.mjs` to emit new event shape (`service`, `version`, `url`, services as `{ service, version, declared? }`)
+3. Update `aggregate-datasets.mjs` to output DAG format (`nodes` + `edges`, no tree, no hidden root)
+3. Change `.env.services` format to `KEY=version` with UPPERCASE convention
+4. Update `deploy.sh` to resolve `KEY=version` → URLs using provider config
 3. Update `deploy.sh` to resolve `latest-rel` / `latest-pr` by querying K8s namespaces
 4. Update `record.mjs` to record resolved versions in events
 5. Update `aggregate-datasets.mjs` to output `{ nodes, edges }` format with version field
-6. Add snapshot generation to `aggregate-datasets.mjs` (emit per-event DAG state)
-7. Replace `d3.tree()` in `index.js` with d3-dag Sugiyama layout
-8. Update node rendering to show version prominently
-9. Add timeline slider/dropdown to dashboard for browsing snapshots
-10. Add pre-deploy validation (health-check resolved URLs)
+6. Replace `d3.tree()` in `index.js` with d3-dag Sugiyama layout
+7. Update node rendering to show version prominently
+8. Add timeline slider to dashboard (rebuild graph from deploys.json up to selected timestamp)
+9. Add pre-deploy validation (health-check resolved URLs)
 11. (Optional) Add cascading redeployment workflow
