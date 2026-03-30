@@ -1,0 +1,24 @@
+{
+  "name": "mf-infra",
+  "version": "1.0.0",
+  "description": "Microfrontends infrastructure.",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kristjanjansen/mf-infra.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/kristjanjansen/mf-infra/issues"
+  },
+  "homepage": "https://github.com/kristjanjansen/mf-infra#readme",
+  "devDependencies": {
+    "vitest": "^4.1.2"
+  }
+}
