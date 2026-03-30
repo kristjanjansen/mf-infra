@@ -129,10 +129,11 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy to RC
+      - name: Deploy to RC (all countries)
         run: |
-          # Deploy all services from live.env to 'rc' namespace
-          # Host: rc.fachwerk.dev
+          # For each config/{country}.json:
+          #   deploy all services from live.env to rc-{country} namespace
+          #   mount config/{country}.json as ConfigMap
 
       - name: Test against RC
         run: |
@@ -145,16 +146,17 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy to live
+      - name: Deploy to live (all countries)
         run: |
-          # Deploy all services from live.env to 'live' namespace
-          # Host: app.fachwerk.dev
+          # For each config/{country}.json:
+          #   deploy all services from live.env to live-{country} namespace
+          #   mount config/{country}.json as ConfigMap
 
       - name: Smoke test
         id: smoke
         continue-on-error: true
         run: |
-          # Quick health check on app.fachwerk.dev
+          # Quick health check on ee.app.fachwerk.dev (and lv, lt)
 
       - name: Auto-rollback on failure
         if: steps.smoke.outcome == 'failure'
@@ -266,33 +268,96 @@ Or update `live.env` to specific older versions and push.
 
 ## K8s Setup
 
-Two permanent namespaces:
+### Per-Country Namespaces
+
+Live and RC each get one namespace per country:
 
 ```bash
-kubectl create namespace rc
-kubectl create namespace live
+# Live
+kubectl create namespace live-ee
+kubectl create namespace live-lv
+kubectl create namespace live-lt
+
+# RC
+kubectl create namespace rc-ee
+kubectl create namespace rc-lv
+kubectl create namespace rc-lt
 ```
 
-Both deployed the same way as previews but:
-- Namespaces are permanent (not created/deleted)
-- Hosts are `rc.fachwerk.dev` and `app.fachwerk.dev`
-- TLS required (cert-manager with Let's Encrypt)
-- Images pulled from ghcr.io
+Each namespace gets:
+- Same MFE images (from `live.env` versions)
+- Country-specific `config.json` mounted as K8s ConfigMap
+- Country-specific ingress/domain
 
-DNS records (alongside `*.mfe.fachwerk.dev` wildcard for previews):
+### ConfigMaps
+
+Per-country config mounted into the host container as `/config.json`:
+
 ```bash
-doctl compute domain records create fachwerk.dev --record-type A --record-name rc --record-data "$LB_IP"
-doctl compute domain records create fachwerk.dev --record-type A --record-name app --record-data "$LB_IP"
+kubectl create configmap country-config \
+  --from-file=config.json=config/ee.json \
+  -n live-ee
 ```
+
+### DNS
+
+```bash
+# Live (per country)
+doctl compute domain records create fachwerk.dev --record-type A --record-name "ee.app" --record-data "$LB_IP"
+doctl compute domain records create fachwerk.dev --record-type A --record-name "lv.app" --record-data "$LB_IP"
+doctl compute domain records create fachwerk.dev --record-type A --record-name "lt.app" --record-data "$LB_IP"
+
+# RC (per country)
+doctl compute domain records create fachwerk.dev --record-type A --record-name "rc-ee" --record-data "$LB_IP"
+doctl compute domain records create fachwerk.dev --record-type A --record-name "rc-lv" --record-data "$LB_IP"
+doctl compute domain records create fachwerk.dev --record-type A --record-name "rc-lt" --record-data "$LB_IP"
+
+# Previews (single wildcard, single country)
+# *.mfe.fachwerk.dev already exists
+```
+
+### Deploy Flow
+
+The workflow loops over countries:
+
+```bash
+for country in ee lv lt; do
+  NAMESPACE="live-${country}"
+  HOST="${country}.app.fachwerk.dev"
+  CONFIG="config/${country}.json"
+
+  # Update ConfigMap
+  kubectl create configmap country-config \
+    --from-file=config.json="$CONFIG" \
+    -n "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
+
+  # Deploy all services from live.env
+  for service in $(parse_live_env); do
+    deploy "$service" "$NAMESPACE" "$HOST"
+  done
+done
+```
+
+### Previews: Single Country
+
+Previews stay simple — one namespace, one country (EE by default). No per-country preview URLs. Shell has a dev-only country selector dropdown for testing other countries.
+
+### TLS
+
+- cert-manager with Let's Encrypt (from k8s-provider-agnostic plan)
+- Separate certs per domain: `ee.app.fachwerk.dev`, `lv.app.fachwerk.dev`, `lt.app.fachwerk.dev`
+- Or a SAN cert covering all three
 
 ## Migration Steps
 
 1. Replace `RELEASE` PR title convention with tag-triggered releases in each repo
 2. Remove release title scanning from `pr-preview.yml`
 3. Create `live.env` in mfe-infra with initial pinned versions
-4. Create `rc` and `live` K8s namespaces
-5. Add DNS records for `rc.fachwerk.dev` and `app.fachwerk.dev`
-6. Create the combined RC + live deploy workflow
-7. Add health checks (HTTP + asset + smoke test)
-8. Add auto-rollback on live smoke failure
-9. First RC deploy via PR, first live deploy via merge
+4. Create `config/ee.json` (start with one country)
+5. Create per-country K8s namespaces (`live-ee`, `rc-ee`)
+6. Add DNS records for `ee.app.fachwerk.dev` and `rc-ee.fachwerk.dev`
+7. Create the combined RC + live deploy workflow with country loop
+8. Add health checks (HTTP + asset + smoke test per country)
+9. Add auto-rollback on live smoke failure
+10. First RC deploy via PR, first live deploy via merge
+11. Add LV and LT when ready (add config JSON + namespace + DNS)
