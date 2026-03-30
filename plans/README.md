@@ -8,4 +8,4 @@ Suggested execution order:
 4. [Dark Mode](dark-mode.md) — CSS custom properties through shadow DOM, no-flash toggle
 5. [Graph & Services](graph-and-services.md) — DAG visualization, `.env.services` redesign, version visibility, data structure cleanup
 6. [Testing](testing.md) — Vitest everywhere (unit, browser mode, infra), smoke tests against live previews
-7. [Going Live](going-live.md) — production deployment via pinned `live.env` manifest, promotion flow, rollback
+7. [Going Live](going-live.md) — tag-based releases, RC environment, `live.env` promotion via PR, auto-rollback
