@@ -82,7 +82,7 @@ jobs:
           set -euo pipefail
           PROVIDER="${PROVIDER:-${{ vars.PROVIDER || 'local' }}}"
           source "mfe-infra/k8s/providers/${PROVIDER}/config.env"
-          echo "DOMAIN=${DOMAIN}" >> "$GITHUB_ENV"
+          echo "MFE_DOMAIN=${MFE_DOMAIN}" >> "$GITHUB_ENV"
           echo "PROTOCOL=${PROTOCOL}" >> "$GITHUB_ENV"
           echo "REGISTRY=${REGISTRY}" >> "$GITHUB_ENV"
 
@@ -108,7 +108,7 @@ jobs:
           SUFFIX="rel-${SAFE_VERSION}"
 
           NAMESPACE="${SERVICE_NAME}-${SUFFIX}"
-          HOST="${SUFFIX}--${SERVICE_NAME}.${DOMAIN}"
+          HOST="${SUFFIX}--${SERVICE_NAME}.${MFE_DOMAIN}"
           URL="${PROTOCOL}://${HOST}"
           if [ -n "${REGISTRY}" ]; then
             IMAGE="${REGISTRY}/${SERVICE_NAME}:${SUFFIX}"

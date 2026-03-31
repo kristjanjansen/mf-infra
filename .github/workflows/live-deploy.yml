@@ -50,7 +50,9 @@ jobs:
           set -euo pipefail
           PROVIDER="${PROVIDER:-local}"
           source "k8s/providers/${PROVIDER}/config.env"
-          echo "DOMAIN=${DOMAIN}" >> "$GITHUB_ENV"
+          echo "MFE_DOMAIN=${MFE_DOMAIN}" >> "$GITHUB_ENV"
+          echo "WEB_DOMAIN=${WEB_DOMAIN}" >> "$GITHUB_ENV"
+          echo "APP_DOMAIN=${APP_DOMAIN}" >> "$GITHUB_ENV"
           echo "PROTOCOL=${PROTOCOL}" >> "$GITHUB_ENV"
 
       - name: Deploy to RC (all countries)
@@ -60,7 +62,7 @@ jobs:
           for config_file in config/*.json; do
             country=$(basename "$config_file" .json)
             NAMESPACE="rc-${country}"
-            HOST="rc-${country}--mfe-host-web.${DOMAIN}"
+            HOST="rc-${country}--mfe-host-web.${MFE_DOMAIN}"
 
             echo "Deploying RC for ${country} -> ${PROTOCOL}://${HOST}"
 
@@ -112,7 +114,9 @@ jobs:
           set -euo pipefail
           PROVIDER="${PROVIDER:-local}"
           source "k8s/providers/${PROVIDER}/config.env"
-          echo "DOMAIN=${DOMAIN}" >> "$GITHUB_ENV"
+          echo "MFE_DOMAIN=${MFE_DOMAIN}" >> "$GITHUB_ENV"
+          echo "WEB_DOMAIN=${WEB_DOMAIN}" >> "$GITHUB_ENV"
+          echo "APP_DOMAIN=${APP_DOMAIN}" >> "$GITHUB_ENV"
           echo "PROTOCOL=${PROTOCOL}" >> "$GITHUB_ENV"
 
       - name: Deploy to live (all countries)
@@ -122,7 +126,7 @@ jobs:
           for config_file in config/*.json; do
             country=$(basename "$config_file" .json)
             NAMESPACE="live-${country}"
-            HOST="${country}.web.fachwerk.dev"
+            HOST="${country}.${WEB_DOMAIN}"
 
             echo "Deploying live for ${country} -> ${PROTOCOL}://${HOST}"
 
@@ -165,7 +169,7 @@ jobs:
           set -euo pipefail
           for config_file in config/*.json; do
             country=$(basename "$config_file" .json)
-            HOST="${country}.web.fachwerk.dev"
+            HOST="${country}.${WEB_DOMAIN}"
             URL="${PROTOCOL}://${HOST}"
             echo "Smoke testing ${URL}..."
             curl --fail --max-time 10 "$URL" || exit 1
