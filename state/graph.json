@@ -1,47 +1,47 @@
 {
-  "generated_at": "2026-03-31T15:31:53.583Z",
+  "generated_at": "2026-03-31T15:51:39.160Z",
   "nodes": [
     {
       "service": "mfe-host-web",
-      "version": "rel-rel-0-0-7",
-      "url": "https://rel-0-0-7--mfe-host-web.mfe.fachwerk.dev",
+      "version": "rel-rel-0-0-9",
+      "url": "https://rel-0-0-9--mfe-host-web.mfe.fachwerk.dev",
       "status": "success",
-      "last_deployed": "2026-03-31T15:31:32Z"
+      "last_deployed": "2026-03-31T15:51:23Z"
     },
     {
       "service": "mfe-layout",
-      "version": "rel-rel-0-0-5",
-      "url": "http://rel-0-0-5--mfe-layout.localtest.me",
+      "version": "rel-rel-0-0-7",
+      "url": "http://rel-0-0-7--mfe-layout.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T15:31:32Z"
+      "last_deployed": "2026-03-31T15:51:23Z"
     },
     {
       "service": "mfe-billing",
-      "version": "rel-rel-0-0-5",
-      "url": "http://rel-0-0-5--mfe-billing.localtest.me",
+      "version": "rel-rel-0-0-7",
+      "url": "http://rel-0-0-7--mfe-billing.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T15:31:32Z"
+      "last_deployed": "2026-03-31T15:51:23Z"
     },
     {
       "service": "mfe-dashboard",
-      "version": "rel-rel-0-0-5",
-      "url": "http://rel-0-0-5--mfe-dashboard.localtest.me",
+      "version": "rel-rel-0-0-7",
+      "url": "http://rel-0-0-7--mfe-dashboard.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T15:31:32Z"
+      "last_deployed": "2026-03-31T15:51:23Z"
     },
     {
       "service": "mfe-cookiebot",
-      "version": "rel-rel-0-0-5",
-      "url": "http://rel-0-0-5--mfe-cookiebot.localtest.me",
+      "version": "rel-rel-0-0-7",
+      "url": "http://rel-0-0-7--mfe-cookiebot.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T15:31:32Z"
+      "last_deployed": "2026-03-31T15:51:23Z"
     },
     {
       "service": "mfe-api",
-      "version": "rel-rel-0-0-3",
-      "url": "http://rel-0-0-3--mfe-api.localtest.me",
+      "version": "rel-rel-0-0-7",
+      "url": "http://rel-0-0-7--mfe-api.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T15:31:32Z"
+      "last_deployed": "2026-03-31T15:51:23Z"
     }
   ],
   "edges": [
