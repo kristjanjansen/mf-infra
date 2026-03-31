@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-31T16:22:52.509Z",
+  "generated_at": "2026-03-31T18:45:11.320Z",
   "events": [
     {
       "timestamp": "2026-03-31T16:22:27Z",
@@ -34,6 +34,27 @@
         },
         {
           "timestamp": "2026-03-31T16:22:27Z",
+          "app_name": "mfe-api",
+          "environment": "rel",
+          "deploy_url": "https://rel-0-0-7--mfe-api.mfe.fachwerk.dev"
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-03-31T18:44:53Z",
+      "app_name": "mfe-layout",
+      "environment": "rel",
+      "deploy_url": "https://rel-0-0-11--mfe-layout.mfe.fachwerk.dev",
+      "status": "success",
+      "services": [
+        {
+          "timestamp": "2026-03-31T18:44:53Z",
+          "app_name": "mfe-translations",
+          "environment": "rel",
+          "deploy_url": "https://rel-0-0-7--mfe-translations.mfe.fachwerk.dev"
+        },
+        {
+          "timestamp": "2026-03-31T18:44:53Z",
           "app_name": "mfe-api",
           "environment": "rel",
           "deploy_url": "https://rel-0-0-7--mfe-api.mfe.fachwerk.dev"

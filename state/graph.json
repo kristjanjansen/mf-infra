@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-31T16:22:52.509Z",
+  "generated_at": "2026-03-31T18:45:11.320Z",
   "nodes": [
     {
       "service": "mfe-host-web",
@@ -10,10 +10,10 @@
     },
     {
       "service": "mfe-layout",
-      "version": "rel-0-0-7",
-      "url": "https://rel-0-0-7--mfe-layout.mfe.fachwerk.dev",
-      "status": "",
-      "last_deployed": "2026-03-31T16:22:27Z"
+      "version": "rel-0-0-11",
+      "url": "https://rel-0-0-11--mfe-layout.mfe.fachwerk.dev",
+      "status": "success",
+      "last_deployed": "2026-03-31T18:44:53Z"
     },
     {
       "service": "mfe-billing",
@@ -41,7 +41,14 @@
       "version": "rel-0-0-7",
       "url": "https://rel-0-0-7--mfe-api.mfe.fachwerk.dev",
       "status": "",
-      "last_deployed": "2026-03-31T16:22:27Z"
+      "last_deployed": "2026-03-31T18:44:53Z"
+    },
+    {
+      "service": "mfe-translations",
+      "version": "rel-0-0-7",
+      "url": "https://rel-0-0-7--mfe-translations.mfe.fachwerk.dev",
+      "status": "",
+      "last_deployed": "2026-03-31T18:44:53Z"
     }
   ],
   "edges": [
@@ -64,6 +71,14 @@
     {
       "from": "mfe-host-web",
       "to": "mfe-layout"
+    },
+    {
+      "from": "mfe-layout",
+      "to": "mfe-api"
+    },
+    {
+      "from": "mfe-layout",
+      "to": "mfe-translations"
     }
   ]
 }
