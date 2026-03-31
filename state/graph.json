@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-31T18:46:15.726Z",
+  "generated_at": "2026-03-31T18:46:57.039Z",
   "nodes": [
     {
       "service": "mfe-host-web",
@@ -17,10 +17,10 @@
     },
     {
       "service": "mfe-billing",
-      "version": "rel-0-0-11",
-      "url": "https://rel-0-0-11--mfe-billing.mfe.fachwerk.dev",
-      "status": "success",
-      "last_deployed": "2026-03-31T18:45:59Z"
+      "version": "rel-0-0-7",
+      "url": "https://rel-0-0-7--mfe-billing.mfe.fachwerk.dev",
+      "status": "",
+      "last_deployed": "2026-03-31T16:22:27Z"
     },
     {
       "service": "mfe-dashboard",
@@ -31,33 +31,33 @@
     },
     {
       "service": "mfe-cookiebot",
-      "version": "rel-0-0-7",
-      "url": "https://rel-0-0-7--mfe-cookiebot.mfe.fachwerk.dev",
-      "status": "",
-      "last_deployed": "2026-03-31T16:22:27Z"
+      "version": "rel-0-0-11",
+      "url": "https://rel-0-0-11--mfe-cookiebot.mfe.fachwerk.dev",
+      "status": "success",
+      "last_deployed": "2026-03-31T18:46:39Z"
     },
     {
       "service": "mfe-api",
       "version": "rel-0-0-7",
       "url": "https://rel-0-0-7--mfe-api.mfe.fachwerk.dev",
       "status": "",
-      "last_deployed": "2026-03-31T18:45:59Z"
+      "last_deployed": "2026-03-31T18:46:39Z"
     },
     {
       "service": "mfe-translations",
       "version": "rel-0-0-7",
       "url": "https://rel-0-0-7--mfe-translations.mfe.fachwerk.dev",
       "status": "",
-      "last_deployed": "2026-03-31T18:45:59Z"
+      "last_deployed": "2026-03-31T18:46:39Z"
     }
   ],
   "edges": [
     {
-      "from": "mfe-billing",
+      "from": "mfe-cookiebot",
       "to": "mfe-api"
     },
     {
-      "from": "mfe-billing",
+      "from": "mfe-cookiebot",
       "to": "mfe-translations"
     },
     {
