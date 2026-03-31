@@ -108,7 +108,7 @@ jobs:
           SUFFIX="rel-${SAFE_VERSION}"
 
           NAMESPACE="${SERVICE_NAME}-${SUFFIX}"
-          HOST="${SERVICE_NAME}-${SUFFIX}.${DOMAIN}"
+          HOST="${SUFFIX}--${SERVICE_NAME}.${DOMAIN}"
           URL="${PROTOCOL}://${HOST}"
           if [ -n "${REGISTRY}" ]; then
             IMAGE="${REGISTRY}/${SERVICE_NAME}:${SUFFIX}"

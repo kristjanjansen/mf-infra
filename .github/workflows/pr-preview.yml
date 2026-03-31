@@ -90,8 +90,8 @@ jobs:
 
           echo "NAMESPACE=${SERVICE_NAME}-${SUFFIX}" >> "$GITHUB_ENV"
           echo "IMAGE=${FULL_IMAGE}" >> "$GITHUB_ENV"
-          echo "HOST=${SERVICE_NAME}-${SUFFIX}.${DOMAIN}" >> "$GITHUB_ENV"
-          echo "DEPLOY_URL=${PROTOCOL}://${SERVICE_NAME}-${SUFFIX}.${DOMAIN}" >> "$GITHUB_ENV"
+          echo "HOST=${SUFFIX}--${SERVICE_NAME}.${DOMAIN}" >> "$GITHUB_ENV"
+          echo "DEPLOY_URL=${PROTOCOL}://${SUFFIX}--${SERVICE_NAME}.${DOMAIN}" >> "$GITHUB_ENV"
           echo "EVENT_ENVIRONMENT=${EVENT_ENVIRONMENT}" >> "$GITHUB_ENV"
 
       - name: Log in to container registry
