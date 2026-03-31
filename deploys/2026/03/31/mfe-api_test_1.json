@@ -1,8 +1,0 @@
-{
-  "timestamp": "2026-03-31T08:28:00Z",
-  "app_name": "mfe-api",
-  "environment": "pr",
-  "deploy_url": "https://mfe-api-test.mfe.fachwerk.dev",
-  "status": "success",
-  "services": []
-}

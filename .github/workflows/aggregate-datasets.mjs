@@ -71,9 +71,14 @@ function extractVersion(deployUrl, serviceName) {
   try {
     const host = new URL(deployUrl).hostname;
     const label = host.split(".")[0];
+    // New format: {version}--{service}
+    if (label.includes("--")) {
+      return label.split("--")[0];
+    }
+    // Old format: {service}-{version}
     const prefix = serviceName + "-";
     if (label.startsWith(prefix)) {
-      return label.slice(prefix.length).replace(/^(pr-|rel-)/, "");
+      return label.slice(prefix.length);
     }
   } catch {
     // ignore

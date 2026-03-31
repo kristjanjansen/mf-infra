@@ -101,6 +101,22 @@ function inferEnvFromDeployUrl(deployUrl) {
   }
 }
 
+function isShortVersion(val) {
+  return /^(rel-|pr-|latest-)/.test(val) || /^\d+\.\d+\.\d+$/.test(val);
+}
+
+function resolveShortFormat(key, version) {
+  const service = key.toLowerCase().replace(/_/g, "-");
+  const slug = version.replace(/\./g, "-");
+  const domain = process.env.MFE_DOMAIN || "mfe.fachwerk.dev";
+  const protocol = process.env.PROTOCOL || "https";
+  return {
+    app_name: service,
+    environment: version.startsWith("pr-") ? "pr" : "rel",
+    deploy_url: `${protocol}://${slug}--${service}.${domain}`,
+  };
+}
+
 function parseEnvServicesFile(filePath) {
   if (!filePath) return [];
   if (!fs.existsSync(filePath)) return [];
@@ -119,18 +135,26 @@ function parseEnvServicesFile(filePath) {
     if (idx <= 0) continue;
 
     const key = withoutExport.slice(0, idx).trim();
-    const val = withoutExport.slice(idx + 1).trim();
-    const deployUrl = normalizeDeployUrl(val);
-    if (!deployUrl) continue;
+    const val = stripQuotes(withoutExport.slice(idx + 1).trim());
+    if (!val) continue;
 
-    const inferredEnv = inferEnvFromDeployUrl(deployUrl);
-
-    out.push({
-      timestamp: TS || "",
-      app_name: inferServiceName(key, deployUrl),
-      environment: inferredEnv || ENVIRONMENT,
-      deploy_url: deployUrl,
-    });
+    if (isShortVersion(val)) {
+      const resolved = resolveShortFormat(key, val);
+      out.push({
+        timestamp: TS || "",
+        ...resolved,
+      });
+    } else {
+      const deployUrl = normalizeDeployUrl(val);
+      if (!deployUrl) continue;
+      const inferredEnv = inferEnvFromDeployUrl(deployUrl);
+      out.push({
+        timestamp: TS || "",
+        app_name: inferServiceName(key, deployUrl),
+        environment: inferredEnv || ENVIRONMENT,
+        deploy_url: deployUrl,
+      });
+    }
   }
   return out;
 }

@@ -40,6 +40,14 @@ export DEPLOY_URL
 export STATUS
 export SHA
 export REF
+# Load provider config for URL resolution in record.mjs
+PROVIDER="${PROVIDER:-local}"
+PROVIDER_CONFIG="${ROOT_DIR}/k8s/providers/${PROVIDER}/config.env"
+if [ -f "$PROVIDER_CONFIG" ]; then
+  source "$PROVIDER_CONFIG"
+fi
+export MFE_DOMAIN="${MFE_DOMAIN:-localtest.me}"
+export PROTOCOL="${PROTOCOL:-http}"
 export SERVICES_FILE="${GITHUB_WORKSPACE}/.env.services"
 
 node "${GITHUB_ACTION_PATH}/record.mjs" "${EVENT_FILE}"
