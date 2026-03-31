@@ -1,47 +1,47 @@
 {
-  "generated_at": "2026-03-31T14:04:04.348Z",
+  "generated_at": "2026-03-31T15:31:53.583Z",
   "nodes": [
     {
       "service": "mfe-host-web",
-      "version": "rel-rel-0-0-6",
-      "url": "https://rel-0-0-6--mfe-host-web.mfe.fachwerk.dev",
+      "version": "rel-rel-0-0-7",
+      "url": "https://rel-0-0-7--mfe-host-web.mfe.fachwerk.dev",
       "status": "success",
-      "last_deployed": "2026-03-31T14:03:47Z"
+      "last_deployed": "2026-03-31T15:31:32Z"
     },
     {
       "service": "mfe-layout",
-      "version": "rel-rel-0-0-3",
-      "url": "http://rel-0-0-3--mfe-layout.localtest.me",
+      "version": "rel-rel-0-0-5",
+      "url": "http://rel-0-0-5--mfe-layout.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T14:03:47Z"
+      "last_deployed": "2026-03-31T15:31:32Z"
     },
     {
       "service": "mfe-billing",
-      "version": "rel-rel-0-0-3",
-      "url": "http://rel-0-0-3--mfe-billing.localtest.me",
+      "version": "rel-rel-0-0-5",
+      "url": "http://rel-0-0-5--mfe-billing.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T14:03:47Z"
+      "last_deployed": "2026-03-31T15:31:32Z"
     },
     {
       "service": "mfe-dashboard",
-      "version": "rel-rel-0-0-3",
-      "url": "http://rel-0-0-3--mfe-dashboard.localtest.me",
+      "version": "rel-rel-0-0-5",
+      "url": "http://rel-0-0-5--mfe-dashboard.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T14:03:47Z"
+      "last_deployed": "2026-03-31T15:31:32Z"
     },
     {
       "service": "mfe-cookiebot",
-      "version": "rel-rel-0-0-3",
-      "url": "http://rel-0-0-3--mfe-cookiebot.localtest.me",
+      "version": "rel-rel-0-0-5",
+      "url": "http://rel-0-0-5--mfe-cookiebot.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T14:03:47Z"
+      "last_deployed": "2026-03-31T15:31:32Z"
     },
     {
       "service": "mfe-api",
       "version": "rel-rel-0-0-3",
       "url": "http://rel-0-0-3--mfe-api.localtest.me",
       "status": "",
-      "last_deployed": "2026-03-31T14:03:47Z"
+      "last_deployed": "2026-03-31T15:31:32Z"
     }
   ],
   "edges": [
