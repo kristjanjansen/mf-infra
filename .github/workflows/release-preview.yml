@@ -42,6 +42,7 @@ jobs:
     permissions:
       pull-requests: read
       contents: read
+      packages: write
 
     env:
       SERVICE_NAME: ${{ inputs.service_name }}
