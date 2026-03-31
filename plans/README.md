@@ -39,3 +39,7 @@ Event contract across MFEs:
 | `mfe:config-loaded` | Host → MFEs | `{ config }` | [cp-runtime-config](cp-runtime-config.md) |
 
 Version format: `rel-0.0.2` (dotted) in data/config, `rel-0-0-2` (dashed) in DNS hostnames. Deploy script converts. See [graph-and-services](graph-and-services.md).
+
+## Next
+
+14. [Service Config](service-config.md) — move .env.services into package.json `mfe` field, per-MFE dependency granularity
