@@ -1,5 +1,69 @@
 {
-  "generated_at": "2026-03-31T16:21:50.728Z",
-  "nodes": [],
-  "edges": []
+  "generated_at": "2026-03-31T16:22:52.509Z",
+  "nodes": [
+    {
+      "service": "mfe-host-web",
+      "version": "rel-0-0-10",
+      "url": "https://rel-0-0-10--mfe-host-web.mfe.fachwerk.dev",
+      "status": "success",
+      "last_deployed": "2026-03-31T16:22:27Z"
+    },
+    {
+      "service": "mfe-layout",
+      "version": "rel-0-0-7",
+      "url": "https://rel-0-0-7--mfe-layout.mfe.fachwerk.dev",
+      "status": "",
+      "last_deployed": "2026-03-31T16:22:27Z"
+    },
+    {
+      "service": "mfe-billing",
+      "version": "rel-0-0-7",
+      "url": "https://rel-0-0-7--mfe-billing.mfe.fachwerk.dev",
+      "status": "",
+      "last_deployed": "2026-03-31T16:22:27Z"
+    },
+    {
+      "service": "mfe-dashboard",
+      "version": "rel-0-0-7",
+      "url": "https://rel-0-0-7--mfe-dashboard.mfe.fachwerk.dev",
+      "status": "",
+      "last_deployed": "2026-03-31T16:22:27Z"
+    },
+    {
+      "service": "mfe-cookiebot",
+      "version": "rel-0-0-7",
+      "url": "https://rel-0-0-7--mfe-cookiebot.mfe.fachwerk.dev",
+      "status": "",
+      "last_deployed": "2026-03-31T16:22:27Z"
+    },
+    {
+      "service": "mfe-api",
+      "version": "rel-0-0-7",
+      "url": "https://rel-0-0-7--mfe-api.mfe.fachwerk.dev",
+      "status": "",
+      "last_deployed": "2026-03-31T16:22:27Z"
+    }
+  ],
+  "edges": [
+    {
+      "from": "mfe-host-web",
+      "to": "mfe-api"
+    },
+    {
+      "from": "mfe-host-web",
+      "to": "mfe-billing"
+    },
+    {
+      "from": "mfe-host-web",
+      "to": "mfe-cookiebot"
+    },
+    {
+      "from": "mfe-host-web",
+      "to": "mfe-dashboard"
+    },
+    {
+      "from": "mfe-host-web",
+      "to": "mfe-layout"
+    }
+  ]
 }
