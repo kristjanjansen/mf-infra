@@ -1,47 +1,47 @@
 {
-  "generated_at": "2026-03-31T13:47:45.697Z",
+  "generated_at": "2026-03-31T13:49:05.198Z",
   "nodes": [
     {
       "service": "mfe-api",
       "version": "rel-",
       "url": "http://rel-0.0.3",
       "status": "success",
-      "last_deployed": "2026-03-31T13:47:25Z"
+      "last_deployed": "2026-03-31T13:48:48Z"
     },
     {
       "service": "mfe-host-web",
       "version": "rel-",
-      "url": "https://rel-0-0-4--mfe-host-web.mfe.fachwerk.dev",
+      "url": "https://rel-0-0-5--mfe-host-web.mfe.fachwerk.dev",
       "status": "success",
-      "last_deployed": "2026-03-31T13:47:25Z"
+      "last_deployed": "2026-03-31T13:48:48Z"
     },
     {
       "service": "mfe-layout",
       "version": "rel-",
       "url": "http://rel-0.0.3",
       "status": "",
-      "last_deployed": "2026-03-31T13:47:25Z"
+      "last_deployed": "2026-03-31T13:48:48Z"
     },
     {
       "service": "mfe-billing",
       "version": "rel-",
       "url": "http://rel-0.0.3",
       "status": "",
-      "last_deployed": "2026-03-31T13:47:25Z"
+      "last_deployed": "2026-03-31T13:48:48Z"
     },
     {
       "service": "mfe-dashboard",
       "version": "rel-",
       "url": "http://rel-0.0.3",
       "status": "",
-      "last_deployed": "2026-03-31T13:47:25Z"
+      "last_deployed": "2026-03-31T13:48:48Z"
     },
     {
       "service": "mfe-cookiebot",
       "version": "rel-",
       "url": "http://rel-0.0.3",
       "status": "",
-      "last_deployed": "2026-03-31T13:47:25Z"
+      "last_deployed": "2026-03-31T13:48:48Z"
     }
   ],
   "edges": [
