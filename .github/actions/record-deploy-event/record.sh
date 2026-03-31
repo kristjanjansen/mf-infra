@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_DIR="${GITHUB_WORKSPACE}/mf-infra"
+ROOT_DIR="${GITHUB_WORKSPACE}/mfe-infra"
 
 APP_NAME="${INPUT_APP_NAME:?missing app_name}"
 ENVIRONMENT="${INPUT_ENVIRONMENT:?missing environment}"

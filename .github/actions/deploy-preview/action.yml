@@ -16,11 +16,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout mf-infra
+    - name: Checkout mfe-infra
       uses: actions/checkout@v4
       with:
-        repository: kristjanjansen/mf-infra
-        path: mf-infra
+        repository: kristjanjansen/mfe-infra
+        path: mfe-infra
         token: ${{ github.token }}
 
     - run: bash "${GITHUB_ACTION_PATH}/deploy.sh"

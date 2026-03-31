@@ -16,11 +16,11 @@ export HOST="$INPUT_HOST"
 export PORT="$INPUT_PORT"
 export IMAGE="$INPUT_IMAGE"
 
-envsubst < "$GITHUB_WORKSPACE/mf-infra/k8s/base-deployment.yaml" > .preview-temp/deployment.yaml
+envsubst < "$GITHUB_WORKSPACE/mfe-infra/k8s/base-deployment.yaml" > .preview-temp/deployment.yaml
 
-envsubst < "$GITHUB_WORKSPACE/mf-infra/k8s/base-service.yaml" > .preview-temp/service.yaml
+envsubst < "$GITHUB_WORKSPACE/mfe-infra/k8s/base-service.yaml" > .preview-temp/service.yaml
 
-envsubst < "$GITHUB_WORKSPACE/mf-infra/k8s/base-ingress.yaml" > .preview-temp/ingress.yaml
+envsubst < "$GITHUB_WORKSPACE/mfe-infra/k8s/base-ingress.yaml" > .preview-temp/ingress.yaml
 
 # Delete existing Ingress if it exists to avoid validation errors
 kubectl delete ingress "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" --ignore-not-found=true

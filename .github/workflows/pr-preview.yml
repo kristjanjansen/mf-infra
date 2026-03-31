@@ -40,11 +40,11 @@ jobs:
             echo "infra_token_present=false"
           fi
 
-      - name: Checkout mf-infra (for provider config)
+      - name: Checkout mfe-infra (for provider config)
         uses: actions/checkout@v4
         with:
-          repository: kristjanjansen/mf-infra
-          path: mf-infra
+          repository: kristjanjansen/mfe-infra
+          path: mfe-infra
           token: ${{ github.token }}
 
       - name: Load provider config
@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           PROVIDER="${PROVIDER:-${{ vars.PROVIDER || 'local' }}}"
-          source "mf-infra/k8s/providers/${PROVIDER}/config.env"
+          source "mfe-infra/k8s/providers/${PROVIDER}/config.env"
           echo "DOMAIN=${DOMAIN}" >> "$GITHUB_ENV"
           echo "PROTOCOL=${PROTOCOL}" >> "$GITHUB_ENV"
           echo "REGISTRY=${REGISTRY}" >> "$GITHUB_ENV"
@@ -108,7 +108,7 @@ jobs:
           fi
 
       - name: Deploy preview via infra action
-        uses: kristjanjansen/mf-infra/.github/actions/deploy-preview@main
+        uses: kristjanjansen/mfe-infra/.github/actions/deploy-preview@main
         with:
           service_name: ${{ env.SERVICE_NAME }}
           namespace: ${{ env.NAMESPACE }}
@@ -117,7 +117,7 @@ jobs:
           port: ${{ env.PORT }}
 
       - name: Comment PR
-        uses: kristjanjansen/mf-infra/.github/actions/comment-preview@main
+        uses: kristjanjansen/mfe-infra/.github/actions/comment-preview@main
         with:
           header: Preview - ${{ env.SERVICE_NAME }}
           message: |
@@ -125,7 +125,7 @@ jobs:
 
       - name: Record deploy event
         if: ${{ env.INFRA_TOKEN != '' }}
-        uses: kristjanjansen/mf-infra/.github/actions/record-deploy-event@main
+        uses: kristjanjansen/mfe-infra/.github/actions/record-deploy-event@main
         with:
           token: ${{ env.INFRA_TOKEN }}
           app_name: ${{ env.SERVICE_NAME }}
@@ -169,7 +169,7 @@ jobs:
           echo "NAMESPACE=${SERVICE_NAME}-${SUFFIX}" >> "$GITHUB_ENV"
           echo "SHOULD_DELETE=${SHOULD_DELETE}" >> "$GITHUB_ENV"
 
-      - uses: kristjanjansen/mf-infra/.github/actions/delete-preview@main
+      - uses: kristjanjansen/mfe-infra/.github/actions/delete-preview@main
         if: env.SHOULD_DELETE == 'true'
         with:
           namespace: ${{ env.NAMESPACE }}
