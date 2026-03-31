@@ -28,10 +28,33 @@ kubectl delete ingress "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" --ignore-not-
 # Apply manifests
 kubectl apply -n "$INPUT_NAMESPACE" -f .preview-temp
 
-# Inject services if .env.services exists
+# Copy TLS secret if it exists in ingress-nginx namespace
+kubectl get secret mfe-wildcard-tls -n ingress-nginx -o yaml 2>/dev/null \
+  | sed "s/namespace: ingress-nginx/namespace: $INPUT_NAMESPACE/" \
+  | kubectl apply -f - 2>/dev/null || true
+
+# Copy image pull secret if it exists
+kubectl get secret ghcr-pull -n default -o yaml 2>/dev/null \
+  | sed "s/namespace: default/namespace: $INPUT_NAMESPACE/" \
+  | kubectl apply -f - 2>/dev/null || true
+
+# Patch deployment with image pull secret
+kubectl patch deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE" \
+  -p '{"spec":{"template":{"spec":{"imagePullSecrets":[{"name":"ghcr-pull"}]}}}}' 2>/dev/null || true
+
+# Load provider config for URL resolution
+PROVIDER="${PROVIDER:-local}"
+PROVIDER_CONFIG="$GITHUB_WORKSPACE/mfe-infra/k8s/providers/${PROVIDER}/config.env"
+if [ -f "$PROVIDER_CONFIG" ]; then
+  source "$PROVIDER_CONFIG"
+fi
+MFE_DOMAIN="${MFE_DOMAIN:-localtest.me}"
+PROTOCOL="${PROTOCOL:-http}"
+
+# Inject .env.services with short format resolution
 if [ -f .env.services ]; then
-  echo "🔧 Injecting .env.services"
-  
+  echo "🔧 Resolving .env.services"
+
   ENV_ARGS=()
   while IFS= read -r line || [ -n "$line" ]; do
     line=${line%$'\r'}
@@ -50,22 +73,31 @@ if [ -f .env.services ]; then
 
     KEY=${line%%=*}
     VALUE=${line#*=}
-    KEY=${KEY#${KEY%%[![:space:]]*}}
-    KEY=${KEY%${KEY##*[![:space:]]}}
-    VALUE=${VALUE#${VALUE%%[![:space:]]*}}
-    VALUE=${VALUE%${VALUE##*[![:space:]]}}
+    KEY=$(echo "$KEY" | xargs)
+    VALUE=$(echo "$VALUE" | xargs)
 
-    if [[ "$VALUE" =~ ^\".*\"$ ]]; then
-      VALUE=${VALUE:1:${#VALUE}-2}
-    elif [[ "$VALUE" =~ ^\'.*\'$ ]]; then
-      VALUE=${VALUE:1:${#VALUE}-2}
-    fi
+    # Strip quotes
+    if [[ "$VALUE" =~ ^\"(.*)\"$ ]]; then VALUE="${BASH_REMATCH[1]}"; fi
+    if [[ "$VALUE" =~ ^\'(.*)\'$ ]]; then VALUE="${BASH_REMATCH[1]}"; fi
 
     [[ -z "$KEY" ]] && continue
-    ENV_ARGS+=("${KEY}=${VALUE}")
+
+    # Check if value is a full URL or a short version
+    if [[ "$VALUE" =~ ^https?:// ]]; then
+      # Full URL — use as-is
+      ENV_ARGS+=("${KEY}=${VALUE}")
+      echo "  ${KEY}=${VALUE}"
+    else
+      # Short format: KEY=version → resolve to URL
+      # MFE_API=rel-0.0.0 → service=mfe-api, slug=rel-0-0-0
+      SERVICE=$(echo "$KEY" | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+      VERSION_SLUG=$(echo "$VALUE" | tr '.' '-')
+      URL="${PROTOCOL}://${VERSION_SLUG}--${SERVICE}.${MFE_DOMAIN}"
+      ENV_ARGS+=("${KEY}_URL=${URL}")
+      echo "  ${KEY}=${VALUE} → ${KEY}_URL=${URL}"
+    fi
   done < .env.services
 
-  # Use kubectl to set the env variables directly
   if [ ${#ENV_ARGS[@]} -gt 0 ]; then
     kubectl set env deployment "$INPUT_SERVICE_NAME" \
       -n "$INPUT_NAMESPACE" \
@@ -74,5 +106,37 @@ if [ -f .env.services ]; then
   fi
 fi
 
+# Apply TLS ingress if available
+if kubectl get secret mfe-wildcard-tls -n "$INPUT_NAMESPACE" >/dev/null 2>&1; then
+  kubectl apply -n "$INPUT_NAMESPACE" -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ${INPUT_SERVICE_NAME}
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "*"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - ${INPUT_HOST}
+      secretName: mfe-wildcard-tls
+  rules:
+    - host: ${INPUT_HOST}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ${INPUT_SERVICE_NAME}
+                port:
+                  number: ${INPUT_PORT}
+EOF
+fi
+
 kubectl rollout restart deployment "$INPUT_SERVICE_NAME" -n "$INPUT_NAMESPACE"
-echo "✅ Preview deployed"
+echo "✅ Preview deployed at ${PROTOCOL}://${INPUT_HOST}"
