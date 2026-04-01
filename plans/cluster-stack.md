@@ -192,11 +192,41 @@ spec:
     secretName: mfe-wildcard-tls
 ```
 
-## Runtime Service Config (replaces .env.services)
+## Runtime Service Config (replaces .env.services, .env, env vars)
 
-Currently `.env.services` bakes dependency URLs into the host at build time. Changing a dependency version means rebuilding the host. Instead, make it runtime config.
+### The problem
 
-**ConfigMap** per environment with service URLs:
+URLs are scattered across multiple mechanisms:
+- `.env` files with `MFE_*_URL` / `VITE_*_URL` vars (local dev)
+- `.env.services` with version → URL resolution (deploy)
+- `import.meta.env.MFE_API_URL` in code (build-time baking)
+- `envPrefix: ["MFE_", "VITE_"]` in Vite configs (custom prefix)
+
+Changing a dependency version means rebuilding the host Docker image.
+
+### The solution: one `services.json` file
+
+All URLs in one file. Same pattern for local dev and K8s deploy.
+
+**3 types of URLs the browser needs:**
+1. MFE scripts — host loads `<script src=".../mf-billing.js">`
+2. API — MFEs call `fetch(".../api/v1/bills")`
+3. Translations — i18next fetches `.../en/common.json`
+
+**Local dev** — checked into `mfe-host-web/public/config/services.json`:
+
+```json
+{
+  "mfe-layout": "http://localhost:4000",
+  "mfe-billing": "http://localhost:4001",
+  "mfe-dashboard": "http://localhost:4002",
+  "mfe-cookiebot": "http://localhost:4003",
+  "mfe-api": "http://localhost:5000",
+  "mfe-translations": "http://localhost:5001"
+}
+```
+
+**K8s deploy** — ConfigMap mounts over the same path with real URLs:
 
 ```yaml
 apiVersion: v1
@@ -215,25 +245,62 @@ data:
     }
 ```
 
-Mounted into the host's nginx at `/config/services.json` (alongside existing `config/ee.json`). Host fetches it at runtime before React mounts, same pattern as country config.
+ConfigMap is mounted into the host's nginx container at `/usr/share/nginx/html/config/services.json`, replacing the dev file. Same path, different content.
+
+### Code changes
+
+**Host loads once before React mounts** (same pattern as country config):
 
 ```ts
-// host main.tsx — already does this for config, add services
+// host main.tsx
 const services = await fetch('/config/services.json').then(r => r.json())
 window.__MFE_SERVICES__ = services
 ```
 
-`useMfeScript()` reads from `window.__MFE_SERVICES__` instead of `import.meta.env.MFE_BILLING_URL`.
+**Then everywhere — one way to get any URL:**
 
-**Benefits:**
-- Host never rebuilds when a dependency version changes
-- Argo CD updates the ConfigMap → nginx serves new JSON → next page load picks it up
-- Preview environments get their own ConfigMap with their own URLs
-- The DAG can be derived from ConfigMap contents
-- `.env.services` files deleted from all repos
-- No more `VITE_*` / `MFE_*` env vars for service URLs
+```ts
+// host loading MFE script
+useMfeScript(window.__MFE_SERVICES__['mfe-billing'] + '/mf-billing.js')
 
-**Note:** All service communication in this architecture is browser-based (fetch calls from the browser to external URLs). There are no server-to-server calls between pods. K8s internal DNS is not needed unless a future backend service calls another backend directly.
+// MFE calling API
+fetch(window.__MFE_SERVICES__['mfe-api'] + '/api/v1/bills')
+
+// i18next config
+backend: { loadPath: window.__MFE_SERVICES__['mfe-translations'] + '/{lng}/{ns}.json' }
+```
+
+All MFEs share the same `window` (shadow DOM doesn't isolate JS globals), so `window.__MFE_SERVICES__` is accessible everywhere.
+
+### What gets deleted
+
+- All `.env.services` files (all repos)
+- All `.env` files with `MFE_*_URL` / `VITE_*_URL` vars
+- `envPrefix: ["MFE_", "VITE_"]` from Vite configs
+- All `import.meta.env.MFE_*` references in code
+- URL resolution logic in deploy scripts
+- `VITE_TRANSLATIONS_URL` env var
+- `VITE_API_URL` env var
+
+### What remains
+
+- `mfe-host-web/public/config/services.json` — localhost URLs for dev (checked in)
+- One ConfigMap per K8s environment — real URLs for deploy
+- `window.__MFE_SERVICES__` — single source of truth in code
+- No env vars for URLs. No prefixes. No build-time baking.
+
+### How version updates work
+
+To promote mfe-billing from `rel-0-0-7` to `rel-0-0-8`:
+
+1. Edit the ConfigMap in `mfe-infra/k8s/` (change one URL)
+2. Push to git
+3. Argo CD syncs the ConfigMap
+4. Next page load picks up the new URL
+
+Host image stays the same. No rebuild. No redeploy of the host pod.
+
+**Note:** All service communication is browser-based (fetch calls to external URLs). No server-to-server calls between pods. K8s internal DNS is not relevant to this architecture.
 
 ## DAG Dashboard
 
