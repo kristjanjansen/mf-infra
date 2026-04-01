@@ -209,7 +209,9 @@ data:
       "mfe-layout": "https://rel-0-0-7--mfe-layout.mfe.fachwerk.dev",
       "mfe-billing": "https://rel-0-0-7--mfe-billing.mfe.fachwerk.dev",
       "mfe-dashboard": "https://rel-0-0-7--mfe-dashboard.mfe.fachwerk.dev",
-      "mfe-cookiebot": "https://rel-0-0-7--mfe-cookiebot.mfe.fachwerk.dev"
+      "mfe-cookiebot": "https://rel-0-0-7--mfe-cookiebot.mfe.fachwerk.dev",
+      "mfe-api": "https://rel-0-0-7--mfe-api.mfe.fachwerk.dev",
+      "mfe-translations": "https://rel-0-0-7--mfe-translations.mfe.fachwerk.dev"
     }
 ```
 
@@ -231,7 +233,7 @@ window.__MFE_SERVICES__ = services
 - `.env.services` files deleted from all repos
 - No more `VITE_*` / `MFE_*` env vars for service URLs
 
-**For server-side dependencies** (MFE backend → API): use K8s internal DNS (`http://mfe-api:4000`). No URL resolution needed — services find each other by name within the cluster.
+**Note:** All service communication in this architecture is browser-based (fetch calls from the browser to external URLs). There are no server-to-server calls between pods. K8s internal DNS is not needed unless a future backend service calls another backend directly.
 
 ## DAG Dashboard
 
