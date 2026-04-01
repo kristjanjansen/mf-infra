@@ -17,7 +17,17 @@ GitHub Actions does everything: build → push ghcr.io → kubectl apply → rec
 
 ## What to Adopt
 
-### Phase 1: Argo CD + Traefik (immediate value)
+### Phase 1: Argo CD + Traefik + Nexus (do this first)
+
+GitHub Actions stays as CI (build + push). Argo CD takes over CD (deploy).
+
+```
+GitHub tag → GitHub Actions → build image → push to Nexus → update services.json → git push
+                                                                       ↓
+                                                              Argo CD syncs ConfigMap
+                                                              Argo CD syncs Deployment
+                                                              Traefik routes traffic
+```
 
 **Argo CD** replaces deploy.sh entirely:
 - Manifests live in `mfe-infra/k8s/` (already do)
@@ -53,26 +63,50 @@ Traefik benefits:
 - Push via `docker push nexus.internal:port/mfe-billing:rel-0.0.7`
 - Nexus UI for browsing images, tags, storage
 
+**GitHub Actions workflow (simplified):**
+
+```yaml
+# .github/workflows/release.yml
+on:
+  push:
+    tags: ["rel-*"]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t nexus.internal:port/$SERVICE:$TAG .
+      - run: docker push nexus.internal:port/$SERVICE:$TAG
+      - run: |
+          # Update services.json in mfe-infra with new version URL
+          # Commit + push → triggers Argo CD sync
+```
+
 **What GitHub Actions still does:**
 - Build Docker image
 - Push to Nexus (instead of ghcr.io)
-- Update version in manifest file (triggers Argo sync)
+- Update `services.json` in mfe-infra (triggers Argo CD sync)
 - Run tests
 
 **What GitHub Actions stops doing:**
 - kubectl apply (Argo CD does this)
-- kubeconfig secret (not needed for deploy — still needed for Nexus push unless using Argo Workflows)
+- kubeconfig secret (not needed — only Nexus credentials needed)
 - deploy.sh (deleted)
-- record-deploy-event (Argo notifications replace this)
-- .env.services resolution (moves to Kustomize or Argo CD config)
+- record-deploy-event (Argo CD notifications replace this)
+- .env.services resolution (services.json replaces this)
 - ghcr.io login step
 - OCI label injection in Dockerfiles
 
 **What gets removed from repos:**
+- `.env.services` files
+- `.env` files with `MFE_*_URL` vars
 - `LABEL org.opencontainers.image.source` from all Dockerfiles
 - `ghcr-pull` secret from K8s manifests
 - `imagePullSecrets` from all Deployment specs
 - ghcr.io PAT from GitHub secrets
+- `envPrefix: ["MFE_", "VITE_"]` from Vite configs
+- deploy.sh, record.sh, record.mjs
 
 ### Phase 2: Argo Rollouts (for live environment)
 
@@ -99,7 +133,7 @@ spec:
 - Traefik integration via TraefikService for traffic splitting
 - Only needed for `live` environment, not previews
 
-### Phase 3: Argo Events + Workflows (deploy orchestration + DAG visualization)
+### Phase 3: Argo Events + Workflows (deferred — drop GitHub Actions entirely)
 
 **Argo Workflows** gives two things: CI pipelines AND dependency-aware deploy orchestration with a visual DAG.
 
