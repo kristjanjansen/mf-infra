@@ -23,6 +23,7 @@ spec:
           image: registry:2
           ports:
             - containerPort: 5000
+              hostPort: 5000
           volumeMounts:
             - name: data
               mountPath: /var/lib/registry

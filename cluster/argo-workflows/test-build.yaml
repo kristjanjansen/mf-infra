@@ -51,7 +51,8 @@ spec:
         args:
           - --dockerfile=/work/src/Dockerfile
           - --context=/work/src
-          - --destination=registry.mfe.fachwerk.dev/{{workflow.parameters.service}}:{{workflow.parameters.tag}}
+          - --destination=registry.registry.svc.cluster.local:5000/{{workflow.parameters.service}}:{{workflow.parameters.tag}}
+          - --insecure
         volumeMounts:
           - name: work
             mountPath: /work
