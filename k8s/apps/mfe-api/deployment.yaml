@@ -16,6 +16,6 @@ spec:
         - name: ghcr-pull
       containers:
         - name: mfe-api
-          image: ghcr.io/kristjanjansen/mfe-api:rel-0.0.7
+          image: ghcr.io/kristjanjansen/mfe-api:rel-0-0-7
           ports:
             - containerPort: 4000
