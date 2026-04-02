@@ -1,0 +1,11 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  name: default
+  namespace: argo
+spec:
+  nats:
+    native:
+      replicas: 1
+      maxPayload: 1048576
+      auth: none

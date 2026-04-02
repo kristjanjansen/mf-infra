@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: mfe-release
+  namespace: argo
+spec:
+  dependencies:
+    - name: webhook
+      eventSourceName: github
+      eventName: mfe-release
+  triggers:
+    - template:
+        name: build
+        k8s:
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: mfe-release-
+                namespace: argo
+              spec:
+                workflowTemplateRef:
+                  name: mfe-release
+                arguments:
+                  parameters:
+                    - name: repo
+                    - name: tag
+                    - name: service
+          parameters:
+            - src:
+                dependencyName: webhook
+                dataKey: body.repository.full_name
+              dest: spec.arguments.parameters.0.value
+            - src:
+                dependencyName: webhook
+                dataKey: body.ref
+              dest: spec.arguments.parameters.1.value
+            - src:
+                dependencyName: webhook
+                dataKey: body.repository.name
+              dest: spec.arguments.parameters.2.value

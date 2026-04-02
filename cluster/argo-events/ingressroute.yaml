@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: github-webhook
+  namespace: argo
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`webhook.mfe.fachwerk.dev`)
+      kind: Rule
+      services:
+        - name: github-eventsource-svc
+          port: 12000
+  tls:
+    certResolver: letsencrypt
