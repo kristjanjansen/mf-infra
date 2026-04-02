@@ -12,10 +12,8 @@ spec:
       labels:
         app: mfe-api
     spec:
-      imagePullSecrets:
-        - name: ghcr-pull
       containers:
         - name: mfe-api
-          image: ghcr.io/kristjanjansen/mfe-api:rel-0-0-7
+          image: registry.registry.svc.cluster.local:5000/mfe-api:rel-0.0.13
           ports:
             - containerPort: 4000
